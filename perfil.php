@@ -10,8 +10,8 @@ if (!$userId) {
     exit;
 }
 
-// Busca dados do usuário incluindo verificação de admin
-$stmt = $conn->prepare("SELECT name, email, balance, is_admin FROM users WHERE id = ?");
+// Busca dados do usuário incluindo verificação de admin e CPF (document)
+$stmt = $conn->prepare("SELECT name, email, balance, is_admin, document FROM users WHERE id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -20,7 +20,7 @@ $usuario = $result->fetch_assoc();
 // Verifica se o usuário é admin
 $isAdmin = isset($usuario['is_admin']) && $usuario['is_admin'] == 1;
 
-// Processa alteração de senha
+// Processa alteração de senha ou atualização de CPF
 $mensagem = "";
 $tipoMensagem = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['nova_senha'])) {
@@ -37,6 +37,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['nova_senha'])) {
     } else {
         $mensagem = "Erro: as senhas não coincidem ou são muito curtas (mínimo 6 caracteres).";
         $tipoMensagem = "erro";
+    }
+}
+
+// Atualização de CPF
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['novo_cpf'])) {
+    $cpfRaw = $_POST['novo_cpf'] ?? '';
+    $cpf = preg_replace('/\D/', '', $cpfRaw);
+    if (strlen($cpf) !== 11) {
+        $mensagem = "CPF inválido. Informe 11 dígitos.";
+        $tipoMensagem = "erro";
+    } else {
+        $update = $conn->prepare("UPDATE users SET document = ? WHERE id = ?");
+        $update->bind_param("si", $cpf, $userId);
+        if ($update->execute()) {
+            $mensagem = "CPF atualizado com sucesso!";
+            $tipoMensagem = "sucesso";
+            $usuario['document'] = $cpf;
+        } else {
+            $mensagem = "Erro ao atualizar CPF.";
+            $tipoMensagem = "erro";
+        }
     }
 }
 ?>
@@ -88,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['nova_senha'])) {
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div class="mb-8">
-            <a href="raspadinhas" class="inline-flex items-center px-6 py-3 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors">
+            <a href="/" class="inline-flex items-center px-6 py-3 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 Voltar para o Início
             </a>
@@ -108,6 +129,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['nova_senha'])) {
                         <div class="info-box p-4 rounded-lg">
                             <p class="text-sm text-gray-400">E-mail</p>
                             <p class="text-lg font-semibold"><?= htmlspecialchars($usuario['email']) ?></p>
+                        </div>
+                        <div class="info-box p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">CPF</p>
+                            <p class="text-lg font-semibold"><?= $usuario['document'] ? substr($usuario['document'],0,3).'.'.substr($usuario['document'],3,3).'.'.substr($usuario['document'],6,3).'-'.substr($usuario['document'],9,2) : 'Não informado' ?></p>
                         </div>
                     </div>
                 </div>
@@ -130,6 +155,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['nova_senha'])) {
                             <input type="password" name="confirmar_senha" class="w-full px-4 py-3 rounded-lg input-field" required minlength="6">
                         </div>
                         <button type="submit" class="w-full btn-primary text-white font-bold py-3 px-6 rounded-lg">Alterar Senha</button>
+                    </form>
+                </div>
+                
+                <!-- Card de Atualização de CPF -->
+                <div class="bg-card rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold mb-6">Atualizar CPF</h3>
+                    <?php if ($mensagem): ?>
+                        <div class="mb-6 p-4 rounded-lg <?= $tipoMensagem === 'sucesso' ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300' ?>">
+                            <?= $mensagem ?>
+                        </div>
+                    <?php endif; ?>
+                    <form method="post" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">CPF</label>
+                            <input type="text" name="novo_cpf" id="cpfPerfil" maxlength="14" oninput="mascaraCPF(this)" class="w-full px-4 py-3 rounded-lg input-field" placeholder="000.000.000-00" value="<?= $usuario['document'] ? substr($usuario['document'],0,3).'.'.substr($usuario['document'],3,3).'.'.substr($usuario['document'],6,3).'-'.substr($usuario['document'],9,2) : '' ?>" required>
+                        </div>
+                        <button type="submit" class="w-full btn-primary text-white font-bold py-3 px-6 rounded-lg">Salvar CPF</button>
                     </form>
                 </div>
             </div>

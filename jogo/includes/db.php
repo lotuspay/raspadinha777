@@ -3,9 +3,9 @@ ini_set("display_errors", 1);
 error_reporting(E_ALL);
 
 $host = 'localhost';
-$db = 'raspadinha';
-$user = 'raspadinha';
-$pass = 'raspadinha';
+$db = 'raspadinha777';
+$user = 'raspadinha777';
+$pass = 'Nxf7xzdcEiGBFttA';
 
 $conn = new mysqli($host, $user, $pass, $db);
 

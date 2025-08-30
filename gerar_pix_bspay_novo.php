@@ -1,8 +1,7 @@
 <?php
 session_start();
-require_once 'includes/db.php';
-require_once 'includes/bspay_config.php';
-require_once 'bspay_api.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/lotuspay_api.php';
 
 // Função para log de debug
 function logPixGeneration($message, $data = null) {
@@ -29,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Usuário não autenticado']);
     exit;
@@ -38,8 +37,8 @@ if (!isset($_SESSION['user_id'])) {
 $input = json_decode(file_get_contents('php://input'), true);
 logPixGeneration("Requisição recebida", $input);
 
-$amount = floatval($input['amount'] ?? 0);
-$user_id = $_SESSION['user_id'];
+$amount = floatval($input['amount'] ?? ($input['valor'] ?? 0));
+$user_id = $_SESSION['usuario_id'];
 
 if ($amount < 1) {
     logPixGeneration("Valor inválido", ['amount' => $amount]);
@@ -74,38 +73,32 @@ try {
         'external_id' => $external_id
     ]);
     
-    // Configura a API BSPay
-    $bspay = new BSPayAPI(
-        BSPayConfig::getClientId(),
-        BSPayConfig::getClientSecret()
-    );
-    
-    // Dados para gerar o PIX
+    // LotusPay API
+    $lotus = new LotusPayAPI();
     $pixData = [
         'amount' => $amount,
         'external_id' => $external_id,
-        'payerQuestion' => 'Depósito Raspa Sorte',
-        'payer' => [
+        'metadata' => [
+            'user_id' => $user_id,
             'name' => $user['name'],
-            'document' => '00000000000', // CPF genérico - ajustar se necessário
             'email' => $user['email']
-        ],
-        'postbackUrl' => BSPayConfig::getWebhookUrl()
+        ]
     ];
     
-    logPixGeneration("Dados para BSPay", $pixData);
+    logPixGeneration("Dados para LotusPay", $pixData);
     
     // Gera o QR Code PIX
-    $response = $bspay->gerarQRCode($pixData);
+    $response = $lotus->cashIn($pixData);
     
-    logPixGeneration("Resposta da BSPay", $response);
+    logPixGeneration("Resposta da LotusPay", $response);
     
-    // Retorna os dados do PIX
+    // Retorna os dados do PIX (compatível com frontend que espera 'qrcode')
     echo json_encode([
         'success' => true,
+        'qrcode' => $response['qrcode'] ?? ($response['pix_code'] ?? ($response['qr_code'] ?? '')),
         'qr_code' => $response['qr_code'] ?? '',
         'qr_code_base64' => $response['qr_code_base64'] ?? '',
-        'pix_code' => $response['pix_code'] ?? '',
+        'pix_code' => $response['pix_code'] ?? ($response['emv'] ?? ''),
         'external_id' => $external_id,
         'amount' => $amount,
         'expires_at' => date('Y-m-d H:i:s', strtotime('+30 minutes'))

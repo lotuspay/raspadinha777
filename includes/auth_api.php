@@ -13,7 +13,7 @@ if (!isset($_SESSION["usuario_id"])) {
         exit();
     } else {
         // Para requisições normais, redireciona para login
-        header("Location: ../login.php");
+        header("Location: /inicio.php");
         exit();
     }
 }

@@ -2,6 +2,7 @@
 session_start();
 require 'includes/db.php';
 require 'includes/auth.php';
+require_once __DIR__ . '/includes/lotuspay_api.php';
 
 // Definir cabeçalhos para JSON
 header('Content-Type: application/json');
@@ -22,10 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 try {
     // Receber dados do formulário
     $valor = floatval($_POST['valor'] ?? 0);
-    $tipoChave = $_POST['tipo_chave'] ?? '';
-    $chavePix = $_POST['chave_pix'] ?? '';
-    $nomeCompleto = $_POST['nome_completo'] ?? '';
-    $cpf = $_POST['cpf'] ?? '';
+    $tipoChave = trim((string)($_POST['tipo_chave'] ?? ''));
+    $chavePix = trim((string)($_POST['chave_pix'] ?? ''));
+    $nomeCompleto = trim((string)($_POST['nome_completo'] ?? ''));
+    $cpf = trim((string)($_POST['cpf'] ?? ''));
 
     // Validações básicas
     if ($valor < 10) {
@@ -46,7 +47,7 @@ try {
     }
 
     // Buscar saldo atual do usuário
-    $stmt = $conn->prepare("SELECT balance FROM users WHERE id = ?");
+    $stmt = $conn->prepare("SELECT balance, name, email, document FROM users WHERE id = ?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -58,6 +59,7 @@ try {
     }
 
     $saldoAtual = floatval($usuario['balance']);
+    $docUsuario = preg_replace('/\D/', '', $usuario['document'] ?? '') ?: $cpfLimpo;
 
     // Verificar se o usuário tem saldo suficiente
     if ($valor > $saldoAtual) {
@@ -98,7 +100,66 @@ try {
 
         $saqueId = $conn->insert_id;
 
-        // Atualizar saldo do usuário (debitar o valor)
+        // Montar payload para LotusPay cashOut
+        $externalId = 'WD_' . $userId . '_' . time() . '_' . random_int(1000, 9999);
+
+        // Mapear tipo de chave para padrão esperado
+        $tipoChave = strtolower($tipoChave);
+        $allowedTypes = ['cpf', 'email', 'phone', 'telefone', 'celular', 'aleatoria', 'random', 'evp'];
+        if (!in_array($tipoChave, $allowedTypes, true)) {
+            $tipoChave = 'cpf';
+        }
+        // Normalizar tipos comuns
+        $keyType = match ($tipoChave) {
+            'telefone', 'celular', 'phone' => 'phone',
+            'aleatoria', 'random', 'evp' => 'random',
+            default => $tipoChave, // cpf, email
+        };
+
+        // Callback URL
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $callbackUrl = $scheme . '://' . $host . '/webhook_bspay_novo.php';
+
+        $payload = [
+            'amount' => $valor,
+            'external_id' => $externalId,
+            'recipient' => [
+                'name' => $nomeCompleto ?: ($usuario['name'] ?? 'Cliente'),
+                'document' => $docUsuario,
+                'pix' => [
+                    'key_type' => $keyType,
+                    'key' => $chavePix,
+                ],
+            ],
+            'metadata' => [
+                'user_id' => $userId,
+                'withdraw_id' => $saqueId,
+                'origin' => 'site',
+            ],
+            'callbackUrl' => $callbackUrl,
+        ];
+
+        // Chamar API LotusPay (pode lançar exceção)
+        $lotus = new LotusPayAPI();
+        $cashoutRes = $lotus->cashOut($payload);
+
+        // Atualizar registro do saque com informações da provedora
+        $obs = 'LotusPay cashOut response: ' . json_encode($cashoutRes, JSON_UNESCAPED_UNICODE);
+        $stmt = $conn->prepare("UPDATE saques_pix SET status = 'processando', observacoes = CONCAT(COALESCE(observacoes,''), ?) WHERE id = ?");
+        $sep = (function() use ($conn, $saqueId) {
+            // adiciona quebra de linha antes se já houver conteúdo
+            $q = $conn->prepare("SELECT observacoes FROM saques_pix WHERE id = ?");
+            $q->bind_param("i", $saqueId);
+            $q->execute();
+            $r = $q->get_result()->fetch_assoc();
+            return (!empty($r['observacoes']) ? "\n" : "") ;
+        })();
+        $obsToAppend = $sep . $obs;
+        $stmt->bind_param("si", $obsToAppend, $saqueId);
+        $stmt->execute();
+
+        // Debitar saldo após criar o cashout com sucesso
         $novoSaldo = $saldoAtual - $valor;
         $stmt = $conn->prepare("UPDATE users SET balance = ? WHERE id = ?");
         $stmt->bind_param("di", $novoSaldo, $userId);
@@ -108,10 +169,11 @@ try {
         $conn->commit();
 
         echo json_encode([
-            'success' => true, 
-            'message' => 'Solicitação de saque enviada com sucesso!',
+            'success' => true,
+            'message' => 'Solicitação de saque enviada com sucesso! Em processamento.',
             'saque_id' => $saqueId,
-            'novo_saldo' => $novoSaldo
+            'external_id' => $externalId,
+            'novo_saldo' => $novoSaldo,
         ]);
 
     } catch (Exception $e) {

@@ -10,6 +10,14 @@ $dados = json_decode(file_get_contents("php://input"), true);
 $nome = trim($dados['nome']);
 $email = trim($dados['email']);
 $senha = password_hash($dados['senha'], PASSWORD_DEFAULT);
+$cpfRaw = $dados['cpf'] ?? '';
+$cpf = preg_replace('/\D/', '', (string)$cpfRaw);
+
+// Validação simples do CPF (11 dígitos)
+if (strlen($cpf) !== 11) {
+    echo json_encode(['status' => 'erro', 'mensagem' => 'CPF inválido. Informe 11 dígitos.']);
+    exit;
+}
 
 // Verificar se o e-mail já está cadastrado
 $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
@@ -47,9 +55,9 @@ if ($affiliate_code) {
 try {
     $conn->begin_transaction();
 
-    // Inserir novo usuário
-    $stmt = $conn->prepare("INSERT INTO users (name, email, password, balance, referrer_id) VALUES (?, ?, ?, 0.00, ?)");
-    $stmt->bind_param("sssi", $nome, $email, $senha, $referrer_id);
+    // Inserir novo usuário (salva CPF no campo document)
+    $stmt = $conn->prepare("INSERT INTO users (name, email, password, balance, referrer_id, document) VALUES (?, ?, ?, 0.00, ?, ?)");
+    $stmt->bind_param("sssis", $nome, $email, $senha, $referrer_id, $cpf);
     $stmt->execute();
     $userId = $conn->insert_id;
 

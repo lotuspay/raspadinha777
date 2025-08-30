@@ -8,15 +8,15 @@ header('Content-Type: application/json');
 $input = json_decode(file_get_contents("php://input"), true);
 $valor = floatval($input['valor'] ?? ($input['amount'] ?? 0));
 
-if ($valor < 1) {
-    echo json_encode(['erro' => 'Valor mínimo R$10,00']);
+if ($valor < 10) {
+    echo json_encode(['erro' => 'Valor mínimo R$ 10,00']);
     exit;
 }
 
 $user_id = $_SESSION['usuario_id'];
 
 // Busca nome e email do usuário
-$stmt = $conn->prepare("SELECT name, email FROM users WHERE id = ?");
+$stmt = $conn->prepare("SELECT name, email, document FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -28,23 +28,36 @@ $external_id = 'DEP_' . $user_id . '_' . time() . '_' . rand(1000, 9999);
 try {
     $lotus = new LotusPayAPI();
 
-    // Monta payload conforme LotusPay (campos básicos); manteremos metadados úteis
+    // Monta dados do cliente (gera documento se não houver)
+    $customerDocument = preg_replace('/\D/', '', $user['document'] ?? '') ?: str_pad((string)random_int(0, 99999999999), 11, '0', STR_PAD_LEFT);
+
+    // Callback URL para receber notificações (webhook)
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $callbackUrl = $scheme . '://' . $host . '/webhook_bspay_novo.php';
+
+    // Payload LotusPay com campos obrigatórios
     $payload = [
         'amount' => $valor,
         'external_id' => $external_id,
+        'customer' => [
+            'name' => $user['name'] ?? 'Cliente',
+            'document' => $customerDocument,
+            'email' => $user['email'] ?? null,
+        ],
+        'callbackUrl' => $callbackUrl,
         'metadata' => [
             'user_id' => $user_id,
-            'name' => $user['name'] ?? null,
-            'email' => $user['email'] ?? null,
+            'origin' => 'site',
         ]
     ];
 
     $response = $lotus->cashIn($payload);
 
-    // Log básico (usar error_log para compatibilidade ampla)
+    // Log básico
     error_log("Resposta da LotusPay para Pix: " . json_encode($response));
 
-    // Normaliza possíveis campos do código Pix (qrcode, pix_code, qr_code)
+    // Normaliza possíveis campos do código Pix
     $pixCode = $response['qrcode'] ?? ($response['pix_code'] ?? ($response['qr_code'] ?? ($response['emv'] ?? null)));
 
     if (!empty($pixCode)) {
@@ -69,4 +82,3 @@ try {
         'erro' => 'Erro ao gerar QR Code: ' . $e->getMessage()
     ]);
 }
-?>

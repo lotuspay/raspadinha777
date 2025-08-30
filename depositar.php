@@ -5,8 +5,7 @@ error_reporting(E_ALL);
 session_start();
 // require_once 'includes/auth.php';
 require_once 'includes/db.php';
-require_once 'includes/bspay_api.php';
-require_once 'includes/bspay_config.php';
+require_once 'includes/lotuspay_api.php';
 require_once 'includes/qr_generator.php';
 
 // Verifica se o usuário está logado
@@ -43,24 +42,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Gera ID único para a transação
             $external_id = 'DEP_' . $user_id . '_' . time() . '_' . rand(1000, 9999);
             
-            // Inicializa a API BSPay
-            $bspay = new BSPayAPI(BSPayConfig::getClientId(), BSPayConfig::getClientSecret());
+            // Inicializa a API Lotuspay
+            $lotus = new LotusPayAPI();
             
-            // Dados para gerar o QR Code
-            $dados_qr = [
+            // Monta dados do cliente
+            $customerDocument = str_pad((string)random_int(0, 99999999999), 11, '0', STR_PAD_LEFT);
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $callbackUrl = $scheme . '://' . $host . '/webhook_bspay_novo.php';
+
+            // Payload para gerar cobrança PIX via Lotuspay
+            $payload = [
                 'amount' => $valor,
                 'external_id' => $external_id,
-                'payerQuestion' => 'Depósito na conta - ' . $user['name'],
-                'payer' => [
-                    'name' => $user['name'],
-                    'document' => '00000000000',
-                    'email' => $user['email']
+                'customer' => [
+                    'name' => $user['name'] ?? 'Cliente',
+                    'document' => $customerDocument,
+                    'email' => $user['email'] ?? null,
                 ],
-                'postbackUrl' => 'mock_webhook_url'
+                'callbackUrl' => $callbackUrl,
+                'metadata' => [
+                    'user_id' => $user['id'] ?? $user_id,
+                    'name' => $user['name'] ?? null,
+                    'email' => $user['email'] ?? null,
+                ]
             ];
             
-            // Gera o QR Code
-            $response = $bspay->gerarQRCode($dados_qr);
+            // Solicita a cobrança PIX
+            $response = $lotus->cashIn($payload);
             
             // Salva o depósito pendente no banco
             $stmt = $conn->prepare("INSERT INTO depositos (usuario_id, valor, status, external_id, qr_code, pix_code, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
@@ -68,8 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt === false) {
                 $error = 'Erro na preparação da consulta: ' . $conn->error;
             } else {
-                $qr_code = $response["qr_code"] ?? '';
-                $pix_code = $response["pix_code"] ?? '';
+                // Normaliza possíveis campos de retorno do código Pix
+                $pix_code = $response['qrcode'] ?? ($response['pix_code'] ?? ($response['qr_code'] ?? ($response['emv'] ?? '')));
+                $qr_code = '';
                 $status = 'pendente';
                 $stmt->bind_param("idssss", $user_id, $valor, $status, $external_id, $qr_code, $pix_code);
                 $stmt->execute();

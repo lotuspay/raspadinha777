@@ -1656,6 +1656,10 @@ try {
                         <input type="email" name="email" placeholder="seu@email.com" required class="form-input w-full rounded-lg bg-gray-100 border border-gray-300 text-black focus:border-green-500 focus:outline-none transition-colors">
                     </div>
                     <div>
+                        <label class="block text-xs font-semibold mb-1 text-white">CPF</label>
+                        <input type="text" name="cpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)" required class="form-input w-full rounded-lg bg-gray-100 border border-gray-300 text-black focus:border-green-500 focus:outline-none transition-colors">
+                    </div>
+                    <div>
                         <label class="block text-xs font-semibold mb-1 text-white">Senha</label>
                         <input type="password" name="senha" placeholder="Crie uma senha forte" required class="form-input w-full rounded-lg bg-gray-100 border border-gray-300 text-black focus:border-green-500 focus:outline-none transition-colors">
                     </div>
@@ -1699,7 +1703,7 @@ try {
                     <div>
                         <label class="block text-xs font-semibold mb-1 text-white">Valor do Depósito</label>
                         <input id="valorDeposito" type="number" min="1" step="0.01" placeholder="Ex: 10,00" class="form-input w-full rounded-lg bg-gray-100 border border-gray-300 text-black focus:border-green-500 focus:outline-none transition-colors" />
-                        <p class="text-xs text-gray-400 mt-1">Valor mínimo: R$ 1,00</p>
+                        <p class="text-xs text-gray-400 mt-1">Valor mínimo: R$ 10,00</p>
                     </div>
                     <button onclick="gerarPix()" class="form-button w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-bold rounded-lg transition-all transform hover:scale-105">
                         <i class="fab fa-pix mr-2"></i> Gerar Código Pix
@@ -1866,12 +1870,12 @@ try {
                 const valor = parseFloat(document.getElementById('valorDeposito').value);
                                 
                 if (!valor || valor < 1) {
-                    alert("Valor mínimo: R$ 1,00");
+                    alert("Valor mínimo: R$ 10,00");
                     return;
                 }
 
                 try {
-                    const res = await fetch("gerar_pix_bspay.php", {
+                    const res = await fetch("gerar_pix_lotuspay.php", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ valor })

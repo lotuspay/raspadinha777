@@ -1489,7 +1489,7 @@ $saldo = $usuario['balance'];?>
         <label class="block text-sm font-semibold mb-2">Valor do Depósito</label>
         <input id="valorDeposito" type="number" min="1" step="0.01" placeholder="Ex: 10,00" 
                class="modal-input" />
-        <p class="text-xs text-gray-500 mt-1">Valor mínimo: R$ 1,00</p>
+        <p class="text-xs text-gray-500 mt-1">Valor mínimo: R$ 10,00</p>
       </div>
       
       <button onclick="gerarPix()" class="modal-button mb-4">
@@ -1607,12 +1607,12 @@ function copiarPixCode(codigo) {
 async function gerarPix() {
   const valor = parseFloat(document.getElementById('valorDeposito').value);
   if (!valor || valor < 1) {
-    alert("Valor mínimo: R$ 1,00");
+    alert("Valor mínimo: R$ 10,00");
     return;
   }
 
   try {
-    const res = await fetch("../gerar_pix_bspay.php", {
+    const res = await fetch("../gerar_pix_lotuspay.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ valor })

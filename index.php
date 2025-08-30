@@ -1,109 +1,13 @@
 <?php
-require 'includes/db.php';
-require 'includes/auth.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Pega os parâmetros da URL
-$tipo = $_GET['raspadinha'] ?? 'esperanca';
-$valorAposta = isset($_GET['valor']) ? floatval($_GET['valor']) : 1.00;
+require __DIR__ . '/includes/db.php';
+require __DIR__ . '/includes/auth.php';
 
-// Busca configuração de RTP do admin
-$adminChance = null;
-try {
-    $adminConfigFile = __DIR__ . '/admin/config.json';
-    if (file_exists($adminConfigFile)) {
-        $adminConfig = json_decode(file_get_contents($adminConfigFile), true);
-        if (isset($adminConfig['chance_vitoria'])) {
-            $adminChance = floatval($adminConfig['chance_vitoria']);
-        }
-    }
-} catch (Exception $e) {
-    // Ignora erro e continua sem configuração do admin
-}
+$userId = $_SESSION['usuario_id'] ?? null;
 
-// Busca informações do tipo de raspadinha na tabela
-$bannerPersonalizado = null;
-$tipoRaspadinha = null;
-try {
-    $stmt = $conn->prepare("SELECT nome, premio_maximo, valor_aposta_padrao, banner_personalizado FROM tipos_raspadinha WHERE nome = ? AND ativo = 1");
-    $stmt->bind_param("s", $tipo);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $tipoRaspadinha = $result->fetch_assoc();
-    
-    if ($tipoRaspadinha) {
-        $premioMaximo = floatval($tipoRaspadinha['premio_maximo']);
-        $nomeRaspadinha = $tipoRaspadinha['nome'];
-        // Garantir que o caminho do banner comece com /
-        $bannerPath = $tipoRaspadinha['banner_personalizado'];
-        if (!empty($bannerPath) && $bannerPath[0] !== '/') {
-            $bannerPath = '/' . $bannerPath;
-        }
-        $bannerPersonalizado = $bannerPath;
-        // Define chance baseada no prêmio máximo
-        if ($premioMaximo <= 100) {
-            $chance = 0.0004;
-        } elseif ($premioMaximo <= 500) {
-            $chance = 0.0003;
-        } else {
-            $chance = 0.0002;
-        }
-        
-        // SOBRESCREVE com configuração do admin se existir (incluindo 0)
-        if ($adminChance !== null) {
-            $chance = $adminChance;
-        }
-    } else {
-        // Fallback para configurações padrão se não encontrar na tabela
-        switch ($tipo) {
-          case 'alegria':
-            $premioMaximo = 100.00;
-            $chance = 0.0004;
-            $nomeRaspadinha = 'Alegria';
-            break;
-          case 'emocao':
-            $premioMaximo = 500.00;
-            $chance = 0.0003;
-            $nomeRaspadinha = 'Emoção';
-            break;
-          default:
-            $premioMaximo = 50.00;
-            $chance = 0.005;
-            $nomeRaspadinha = 'Esperança';
-            break;
-        }
-        
-        // SOBRESCREVE com configuração do admin se existir (incluindo 0)
-        if ($adminChance !== null) {
-            $chance = $adminChance;
-        }
-    }
-} catch (Exception $e) {
-    // Em caso de erro, usar configurações padrão
-    switch ($tipo) {
-      case 'alegria':
-        $premioMaximo = 100.00;
-        $chance = 0.0004;
-        $nomeRaspadinha = 'Alegria';
-        break;
-      case 'emocao':
-        $premioMaximo = 500.00;
-        $chance = 0.0003;
-        $nomeRaspadinha = 'Emoção';
-        break;
-      default:
-        $premioMaximo = 50.00;
-        $chance = 0.005;
-        $nomeRaspadinha = 'Esperança';
-        break;
-    }
-    
-    // SOBRESCREVE com configuração do admin se existir (incluindo 0)
-    if ($adminChance !== null) {
-        $chance = $adminChance;
-    }
-}
-
-$userId = $_SESSION['usuario_id'];
 $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
@@ -115,1021 +19,614 @@ $saldo = $usuario['balance'];
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fortuna PIX - Jogo de Raspadinha com Notas de Dinheiro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-/* Reset básico */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #8B5CF6, #A855F7);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    user-select: none; /* Evita seleção de texto durante raspagem */
-}
-
-.game-container {
-    background: rgba(139, 92, 246, 0.9);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-}
-
-.header {
-    margin-bottom: 20px;
-}
-
-.header-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    gap: 10px;
-}
-
-.back-button {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 14px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.back-button:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    text-decoration: none;
-    color: white;
-}
-
-.banner {
-    width: 100%;
-    max-width: 280px;
-    height: auto;
-    margin-bottom: 15px;
-}
-
-.balance-button {
-    background: #22C55E;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 14px;
-    display: inline-block;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.main-scratch-container {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    width: 100%;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-    aspect-ratio: 1;
-    background: black;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-}
-
-.main-scratch-container::before {
-    content: "🎉 PRÊMIOS AQUI! 🎉";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    z-index: 1;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.main-scratch-image {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
-    aspect-ratio: 1;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    display: none; /* Escondido pois usaremos canvas */
-}
-
-/* Estilos para canvas de raspagem */
-.scratch-canvas {
-    border-radius: 15px;
-    touch-action: none; /* Evita scroll no mobile durante raspagem */
-}
-
-.individual-scratch-canvas {
-    border-radius: 10px;
-    touch-action: none;
-}
-
-.scratch-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 20px;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-    transition: all 0.5s ease;
-}
-
-.scratch-grid.hidden {
-    display: none;
-}
-
-.scratch-grid.visible {
-    display: grid;
-    animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Raspa Sorte - Escolha sua Raspadinha</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-purple: #7257b4;
+      --dark-blue: #202c3e;
+      --light-blue: #6876df;
+      --accent-yellow: #fbbf24;
+      --success-green: #10b981;
+      --mobile-padding: clamp(12px, 4vw, 24px );
+      --mobile-gap: clamp(8px, 2vw, 16px);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
-}
-
-.scratch-area {
-    aspect-ratio: 1;
-    background: white;
-    border: 2px solid #22C55E;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #333;
-    font-weight: bold;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    min-height: 80px;
-}
-
-/* Efeito de brilho para áreas não raspadas */
-.scratch-area:not(.prize):not(.money-note):not(.nothing) {
-    background: linear-gradient(45deg, #F3F4F6, #E5E7EB, #F3F4F6);
-    background-size: 200% 200%;
-    animation: shimmer 2s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.scratch-area.prize {
-    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-    border-color: #F59E0B;
-    color: #92400E;
-    animation: prizeGlow 1s ease-in-out;
-}
-
-@keyframes prizeGlow {
-    0% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
-    50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.8); }
-    100% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
-}
-
-.scratch-area.money-note {
-    background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
-    border-color: #3B82F6;
-    color: #1E40AF;
-    padding: 10px; /* Aumentado o padding para diminuir a imagem */
-    animation: moneyPop 0.5s ease-out;
-}
-
-.scratch-area.money-note img {
-    width: 110%; /* Diminuído o tamanho da imagem */
-    height: ; /* Diminuído o tamanho da imagem */
-    object-fit: contain; /* Garante que a imagem inteira seja visível */
-    border-radius: 0px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-@keyframes moneyPop {
-    0% { transform: scale(0.5); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-.scratch-area.nothing {
-    background: linear-gradient(135deg, #FEE2E2, #FECACA);
-    border-color: #EF4444;
-    color: #991B1B;
-    animation: fadeInSlow 0.5s ease-in;
-}
-
-@keyframes fadeInSlow {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.footer {
-    text-align: center;
-}
-
-.message {
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    min-height: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.play-again-button {
-    background: #22C55E;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 25px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.play-again-button:hover {
-    background: #16A34A;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-}
-
-.play-again-button:active {
-    transform: translateY(0);
-}
-
-.play-again-button.visible {
-    display: inline-block;
-    animation: slideUp 0.5s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Indicador de progresso visual */
-.scratch-hint {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.main-scratch-container:hover .scratch-hint {
-    opacity: 1;
-}
-
-/* Responsividade para mobile */
-@media (max-width: 480px) {
+    
     body {
-        padding: 5px;
+      font-family: 'Lexend', sans-serif;
+      background: linear-gradient(135deg, var(--dark-blue) 0%, #1e293b 100%);
+      padding-bottom: 80px;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: filter 0.3s ease;
+    }
+
+    body.modal-open > *:not(#modalDeposito):not(#qrMode){
+      filter: blur(5px);
+      transition: filter 0.3s ease;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    body.modal-open .desktop-nav,
+    body.modal-open .bottom-navbar {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    body.modal-open .bottom-navbar {
+      transform: translateY(100%);
     }
     
-    .game-container {
-        padding: 15px;
-        max-width: 350px;
+    @media (min-width: 768px) {
+      body {
+        padding-bottom: 0;
+      }
     }
     
-    .header-controls {
-        flex-direction: column;
-        gap: 8px;
-        align-items: stretch;
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      height: clamp(100px, 35vw, 350px);
+      overflow: hidden;
+      border-radius: clamp(20px, 3vw, 1px);
+      margin: 0 auto;
+      background: transparent;
+      touch-action: pan-y;
     }
     
-    .back-button {
-        justify-content: center;
-        font-size: 13px;
-        padding: 6px 12px;
+    .carousel-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
     
-    .banner {
-        max-width: 250px;
+    .carousel-slide.active {
+      opacity: 1;
     }
     
-    .balance-button {
-        text-align: center;
-        font-size: 12px;
-        padding: 6px 12px;
+    .carousel-indicators {
+      position: absolute;
+      bottom: clamp(10px, 3vw, 20px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: clamp(6px, 2vw, 12px);
+      z-index: 10;
     }
     
-    .main-scratch-container {
-        max-width: 280px;
+    .indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.4s ease;
+        transform: scale(0.8);
+    }
+
+    .indicator.active {
+      background: white;
+      transform: scale(1.2);
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
     }
     
-    .main-scratch-container::before {
-        font-size: 16px;
+    .raspadinha-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: clamp(16px, 4vw, 24px);
+      padding: 0 var(--mobile-padding);
     }
     
-    .scratch-grid {
-        max-width: 280px;
-        gap: 6px;
+    .raspadinha-card {
+      background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
+      border-radius: clamp(14px, 3vw, 20px);
+      padding: clamp(16px, 4vw, 24px);
+      border: 2px solid transparent;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .raspadinha-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(82, 252, 96, 0.4);
     }
     
-    .scratch-area {
-        font-size: 14px;
-        min-height: 70px;
+    .price-badge {
+      display: inline-block;
+      padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px);
+      border-radius: clamp(16px, 4vw, 24px);
+      font-weight: 800;
+      font-size: clamp(0.8rem, 2.5vw, 1rem);
+      margin-bottom: clamp(12px, 3vw, 18px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
     
-    .message {
-        font-size: 14px;
+    .price-badge.green { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .price-badge.orange { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+    .price-badge.red { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+    
+    .prize-text {
+      color: #fbbf24;
+      font-weight: 700;
+      font-size: clamp(1rem, 3.5vw, 1.3rem);
+      margin-bottom: clamp(8px, 2vw, 12px);
     }
     
-    .play-again-button {
-        font-size: 14px;
-        padding: 10px 20px;
-    }
-}
-
-/* Responsividade para tablets */
-@media (min-width: 481px) and (max-width: 768px) {
-    .game-container {
-        max-width: 450px;
-        padding: 25px;
+    .game-description {
+      color: #e2e8f0;
+      font-size: clamp(0.8rem, 2.5vw, 1rem);
+      margin-bottom: clamp(16px, 4vw, 24px);
+      opacity: 0.9;
     }
     
-    .main-scratch-container {
-        max-width: 350px;
+    .play-button {
+      background: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
+      color: white;
+      font-weight: 800;
+      padding: clamp(12px, 3vw, 16px) 0;
+      border-radius: clamp(16px, 4vw, 24px);
+      text-decoration: none;
+      display: block;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%;
+      text-align: center;
+    }
+
+    .play-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(16, 185, 129, 0.5);
     }
     
-    .main-scratch-container::before {
-        font-size: 20px;
+    .bottom-navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(15px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-around;
+      padding: clamp(8px, 2vw, 12px) 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    .scratch-grid {
-        max-width: 350px;
-        gap: 10px;
+    @media (min-width: 768px) { .bottom-navbar { display: none; } }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #94a3b8;
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
     
-    .scratch-area {
-        font-size: 18px;
-        min-height: 90px;
-    }
-}
-
-/* Responsividade para desktop */
-@media (min-width: 769px) {
-    .game-container {
-        max-width: 500px;
-        padding: 30px;
+    .nav-item.active, .nav-item:hover { color: white; }
+    .nav-item i { font-size: clamp(18px, 4vw, 22px); margin-bottom: 4px; }
+    .nav-item span { font-size: clamp(10px, 2.5vw, 12px); font-weight: 500; }
+    
+    .desktop-nav {
+      background: rgba(30, 41, 59, 0.98);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: clamp(0.75rem, 2vw, 1.25rem) var(--mobile-padding);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     
-    .banner {
-        max-width: 320px;
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
     }
     
-    .balance-button {
-        font-size: 16px;
-        padding: 10px 20px;
+    .modal-content {
+      background: #1e293b;
+      color: white;
+      border-radius: clamp(16px, 4vw, 20px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: clamp(300px, 90vw, 400px);
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .main-scratch-container {
-        max-width: 380px;
+    .modal-input {
+      width: 100%;
+      padding: clamp(12px, 3vw, 16px);
+      border: 2px solid #334155;
+      border-radius: clamp(8px, 2vw, 12px);
+      font-size: clamp(0.9rem, 3vw, 1.1rem);
+      background-color: #0f172a;
+      color: white;
+      transition: all 0.3s ease;
     }
     
-    .main-scratch-container::before {
-        font-size: 22px;
+    .modal-input:focus {
+      outline: none;
+      border-color: var(--success-green);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
     }
     
-    .scratch-grid {
-        max-width: 380px;
-        gap: 12px;
+    .modal-button {
+      background: linear-gradient(135deg, var(--success-green) 0%, #059669 100%);
+      color: white;
+      font-weight: 700;
+      padding: clamp(12px, 3vw, 16px);
+      border-radius: clamp(8px, 2vw, 12px);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .cancel-button {
+      background: #475569;
+      color: white;
+      font-weight: 600;
+      padding: clamp(10px, 2.5vw, 14px);
+      border-radius: clamp(8px, 2vw, 12px);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
     }
     
-    .scratch-area {
-        font-size: 20px;
-        min-height: 100px;
+    .qr-mode {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(20px);
+      z-index: 10001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--mobile-padding);
+    }
+
+    .qr-container {
+      background: #1e293b;
+      color: white;
+      border-radius: clamp(20px, 5vw, 24px);
+      padding: clamp(24px, 6vw, 32px);
+      max-width: clamp(320px, 90vw, 400px);
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .qr-code-wrapper {
+      background: white;
+      border-radius: clamp(16px, 4vw, 20px);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .qr-copy-btn {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: white;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
     
-    .message {
-        font-size: 18px;
-    }
-    
-    .play-again-button {
-        font-size: 18px;
-        padding: 14px 28px;
-    }
-}
-
-/* Estilos para melhor experiência de raspagem */
-.scratch-canvas:hover {
-    cursor: crosshair;
-}
-
-.individual-scratch-canvas:hover {
-    cursor: crosshair;
-}
-
-/* Evita seleção de texto e outros comportamentos indesejados */
-.game-container * {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
-}
-    </style>
-    <script>
-// Lógica do jogo Fortuna PIX com raspagem gradual realística
-// Versão apenas notas: todas as 9 posições sempre exibem notas de dinheiro
-class FortunaPixGame {
-    constructor() {
-        this.mainScratchContainer = document.querySelector(".main-scratch-container");
-        this.scratchGrid = document.querySelector(".scratch-grid");
-        this.scratchAreas = document.querySelectorAll(".scratch-area");
-        this.messageElement = document.querySelector(".message");
-        this.playAgainButton = document.querySelector(".play-again-button");
-        this.balanceButton = document.querySelector(".balance-button");
-        
-        this.gameResults = [];
-        this.hasWinner = false;
-        this.winningPrize = null;
-        this.winningNote = null;
-        this.isMainScratched = false;
-        this.gameStarted = false;
-        
-        // Configurações da raspagem
-        this.scratchRadius = 25;
-        this.scratchThreshold = 0.8; // 80% da área deve ser raspada
-        
-        // Valor da aposta (pode ser configurável)
-        this.valorAposta = <?= $valorAposta ?>;
-        
-        // Prêmio máximo configurado para esta raspadinha
-        this.premioMaximo = <?= $premioMaximo ?>;
-        
-        // Mapeamento de notas de dinheiro
-        this.moneyNotes = {
-            "2": "./jogo/assets/money_notes/2REAIS.jpg",
-            "3": "./jogo/assets/money_notes/3REAIS.jpg", 
-            "5": "./jogo/assets/money_notes/5REAIS.png",
-            "10": "./jogo/assets/money_notes/10REAIS.png",
-            "50": "./jogo/assets/money_notes/50REAIS.png"
-        };
-        
-        this.init();
+    .qr-copy-btn.copied {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
 
-    init() {
-        this.setupMainScratchArea();
-        this.setupPlayAgainButton();
-        this.generateGameResults();
-        this.fetchBalance(); // Busca o saldo inicial
+    .qr-cancel-btn {
+      background: #475569;
+      color: white;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
-
-    setupMainScratchArea() {
-        // Cria canvas para a raspagem principal
-        this.createMainScratchCanvas();
-    }
-
-    createMainScratchCanvas() {
-        const container = this.mainScratchContainer;
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        
-        canvas.className = "scratch-canvas";
-        canvas.style.position = "absolute";
-        canvas.style.top = "0";
-        canvas.style.left = "0";
-        canvas.style.cursor = "crosshair";
-        canvas.style.zIndex = "10";
-        
-        // Ajusta o tamanho do canvas
-        const rect = container.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-        canvas.style.width = rect.width + "px";
-        canvas.style.height = rect.height + "px";
-        
-        // Desenha a camada de raspagem
-        ctx.fillStyle = "#8B5CF6";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Adiciona padrão de raspagem
-        this.drawScratchPattern(ctx, canvas.width, canvas.height);
-        
-        // Adiciona texto "RASPE AQUI"
-        ctx.fillStyle = "white";
-        ctx.font = "bold 24px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("RASPE AQUI", canvas.width / 2, canvas.height / 2);
-        
-        container.appendChild(canvas);
-        
-        this.mainCanvas = canvas;
-        this.mainCtx = ctx;
-        this.setupMainScratchEvents();
-    }
-
-    drawScratchPattern(ctx, width, height) {
-        // Cria padrão diagonal para simular área de raspagem
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
-        ctx.lineWidth = 2;
-        
-        for (let i = 0; i < width + height; i += 10) {
-            ctx.beginPath();
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i - height, height);
-            ctx.stroke();
-        }
-    }
-
-    setupMainScratchEvents() {
-        let isScratching = false;
-        let scratchedPixels = 0;
-        const totalPixels = this.mainCanvas.width * this.mainCanvas.height;
-        
-        // Eventos para mouse
-        this.mainCanvas.addEventListener("mousedown", (e) => {
-            isScratching = true;
-            this.scratch(e, "mouse");
-        });
-        
-        this.mainCanvas.addEventListener("mousemove", (e) => {
-            if (isScratching) {
-                scratchedPixels += this.scratch(e, "mouse");
-                this.checkMainScratchProgress(scratchedPixels, totalPixels);
-            }
-        });
-        
-        this.mainCanvas.addEventListener("mouseup", () => {
-            isScratching = false;
-        });
-        
-        // Eventos para touch (mobile)
-        this.mainCanvas.addEventListener("touchstart", (e) => {
-            e.preventDefault();
-            isScratching = true;
-            this.scratch(e.touches[0], "touch");
-        });
-        
-        this.mainCanvas.addEventListener("touchmove", (e) => {
-            e.preventDefault();
-            if (isScratching) {
-                scratchedPixels += this.scratch(e.touches[0], "touch");
-                this.checkMainScratchProgress(scratchedPixels, totalPixels);
-            }
-        });
-        
-        this.mainCanvas.addEventListener("touchend", (e) => {
-            e.preventDefault();
-            isScratching = false;
-        });
-    }
-
-    scratch(event, type) {
-        const rect = this.mainCanvas.getBoundingClientRect();
-        let x, y;
-        
-        if (type === "mouse") {
-            x = event.clientX - rect.left;
-            y = event.clientY - rect.top;
-        } else {
-            x = event.clientX - rect.left;
-            y = event.clientY - rect.top;
-        }
-        
-        // Ajusta coordenadas para o canvas real
-        x = x * (this.mainCanvas.width / rect.width);
-        y = y * (this.mainCanvas.height / rect.height);
-        
-        // Remove a área raspada
-        this.mainCtx.globalCompositeOperation = "destination-out";
-        this.mainCtx.beginPath();
-        this.mainCtx.arc(x, y, this.scratchRadius, 0, 2 * Math.PI);
-        this.mainCtx.fill();
-        
-        // Retorna área aproximada raspada
-        return Math.PI * this.scratchRadius * this.scratchRadius;
-    }
-
-    checkMainScratchProgress(scratchedPixels, totalPixels) {
-        const progress = scratchedPixels / totalPixels;
-        
-        // Desconta o saldo na primeira raspagem
-        if (progress > 0.1 && !this.gameStarted) {
-            this.gameStarted = true;
-            this.deductBalance();
-        }
-        
-        if (progress >= this.scratchThreshold && !this.isMainScratched) {
-            this.isMainScratched = true;
-            this.revealMainArea();
-        }
-    }
-
-    revealMainArea() {
-        // Remove o canvas de raspagem
-        this.mainCanvas.style.opacity = "0";
-        
-        setTimeout(() => {
-            this.mainScratchContainer.style.display = "none";
-            this.scratchGrid.classList.remove("hidden");
-            this.scratchGrid.classList.add("visible");
-            
-            // Revela todos os prêmios automaticamente
-            this.revealAllPrizes();
-        }, 500);
-    }
-
-    revealAllPrizes() {
-        this.scratchAreas.forEach((area, index) => {
-            const result = this.gameResults[index];
-            
-            // Animação escalonada para cada área
-            setTimeout(() => {
-                // Todas as posições agora sempre exibem notas de dinheiro
-                if (Object.keys(this.moneyNotes).includes(result)) {
-                    // Cria imagem da nota
-                    const img = document.createElement("img");
-                    img.src = this.moneyNotes[result];
-                    img.alt = `Nota de R$ ${result}`;
-                    
-                    area.innerHTML = "";
-                    area.appendChild(img);
-                    area.classList.add("money-note");
-                }
-                
-                // Animação de revelação
-                area.style.transform = "scale(1.1)";
-                setTimeout(() => {
-                    area.style.transform = "scale(1)";
-                }, 200);
-                
-            }, index * 150); // Delay escalonado de 150ms entre cada área
-        });
-        
-        // Mostra o resultado final após todas as áreas serem reveladas
-        setTimeout(() => {
-            this.showFinalResult();
-        }, 9 * 150 + 500); // Aguarda todas as animações + 500ms extra
-    }
-
-    setupPlayAgainButton() {
-        this.playAgainButton.addEventListener("click", () => this.resetGame());
-    }
-
-    generateGameResults() {
-        const possibleNotes = ["2", "3", "5", "10", "50"]; // Notas de dinheiro disponíveis
-        
-        this.gameResults = [];
-        this.hasWinner = false;
-        this.winningPrize = null;
-        this.winningNote = null;
-
-        // Decide se haverá um prêmio (usando a chance configurada no PHP)
-        const shouldWin = Math.random() < <?= $chance ?>;
-
-        if (shouldWin) {
-            // Escolhe a nota vencedora
-            const winningNote = possibleNotes[Math.floor(Math.random() * possibleNotes.length)];
-            this.winningNote = winningNote;
-            this.hasWinner = true;
-            
-            // Calcula o prêmio dinamicamente: valor da nota × 3
-            const noteValue = parseInt(winningNote);
-            this.winningPrize = `R$ ${(noteValue * 3).toFixed(2).replace('.', ',')}`;
-
-            // Cria array com exatamente 3 notas vencedoras em posições aleatórias
-            const winningPositions = [];
-            while (winningPositions.length < 3) {
-                const randomPos = Math.floor(Math.random() * 9);
-                if (!winningPositions.includes(randomPos)) {
-                    winningPositions.push(randomPos);
-                }
-            }
-
-            // Preenche as 9 posições
-            for (let i = 0; i < 9; i++) {
-                if (winningPositions.includes(i)) {
-                    // Posição vencedora: coloca a nota vencedora
-                    this.gameResults.push(winningNote);
-                } else {
-                    // Posição não vencedora: coloca placeholder temporário
-                    this.gameResults.push("placeholder");
-                }
-            }
-
-            // Preenche as posições não vencedoras apenas com notas de dinheiro
-            this.fillNonWinningPositionsOnlyNotes(winningNote, winningPositions);
-
-        } else {
-            // Sem vitória: preenche com notas aleatórias, garantindo que não haja 3 iguais
-            for (let i = 0; i < 9; i++) {
-                let note = possibleNotes[Math.floor(Math.random() * possibleNotes.length)];
-                this.gameResults.push(note);
-            }
-            // Verifica e corrige se acidentalmente gerou 3 iguais
-            this.ensureNoThreeIdenticalOnlyNotes();
-        }
-    }
-
-    fillNonWinningPositionsOnlyNotes(winningNote, winningPositions) {
-        const possibleNotes = ["2", "3", "5", "10", "50"];
-        
-        // Remove a nota vencedora das opções para evitar conflitos
-        const availableNotes = possibleNotes.filter(note => note !== winningNote);
-        
-        // Contador para controlar quantas vezes cada nota aparece
-        const noteCounts = {};
-        availableNotes.forEach(note => noteCounts[note] = 0);
-        
-        // Preenche as posições não vencedoras
-        for (let i = 0; i < 9; i++) {
-            if (!winningPositions.includes(i)) {
-                // Filtra notas que ainda podem ser usadas (aparecem menos de 2 vezes)
-                const availableNotesForPosition = availableNotes.filter(note => noteCounts[note] < 2);
-                
-                if (availableNotesForPosition.length > 0) {
-                    const selectedNote = availableNotesForPosition[Math.floor(Math.random() * availableNotesForPosition.length)];
-                    this.gameResults[i] = selectedNote;
-                    noteCounts[selectedNote]++;
-                } else {
-                    // Se todas as notas já apareceram 2 vezes, escolhe uma aleatória
-                    // (isso é raro, mas garante que sempre seja uma nota)
-                    const randomNote = availableNotes[Math.floor(Math.random() * availableNotes.length)];
-                    this.gameResults[i] = randomNote;
-                }
-            }
-        }
-    }
-
-    ensureNoThreeIdenticalOnlyNotes() {
-        let needsReshuffle = true;
-        const possibleNotes = ["2", "3", "5", "10", "50"];
-        
-        while (needsReshuffle) {
-            needsReshuffle = false;
-            const counts = {};
-            for (const note of this.gameResults) {
-                counts[note] = (counts[note] || 0) + 1;
-                if (counts[note] >= 3) {
-                    needsReshuffle = true;
-                    // Se encontrou 3 iguais, troca um deles para uma nota diferente
-                    const indexToChange = this.gameResults.lastIndexOf(note);
-                    
-                    let newNote = possibleNotes[Math.floor(Math.random() * possibleNotes.length)];
-                    while (newNote === note) {
-                        newNote = possibleNotes[Math.floor(Math.random() * possibleNotes.length)];
-                    }
-                    this.gameResults[indexToChange] = newNote;
-                    break; // Sai do loop interno e verifica novamente
-                }
-            }
-        }
-    }
-
-    checkWinCondition() {
-        const counts = {};
-        for (const note of this.gameResults) {
-            counts[note] = (counts[note] || 0) + 1;
-            if (counts[note] >= 3) {
-                this.hasWinner = true;
-                this.winningNote = note;
-                
-                // Calcula o prêmio dinamicamente baseado no valor da nota
-                if (Object.keys(this.moneyNotes).includes(note)) {
-                    const noteValue = parseInt(note);
-                    let premioCalculado = noteValue * 3;
-                    
-                    // Garante que o prêmio não exceda o máximo configurado
-                    if (premioCalculado > this.premioMaximo) {
-                        premioCalculado = this.premioMaximo;
-                    }
-                    
-                    this.winningPrize = `R$ ${premioCalculado.toFixed(2).replace('.', ',')}`;
-                } else {
-                    // Caso seja algum outro tipo de resultado (não deveria acontecer)
-                    this.winningPrize = "R$ 0,00";
-                }
-                return;
-            }
-        }
-        this.hasWinner = false;
-    }
-
-    showFinalResult() {
-        this.checkWinCondition(); // Verifica a condição de vitória antes de mostrar o resultado
-
-        if (this.hasWinner) {
-            this.messageElement.textContent = `🎉 Parabéns! Você ganhou ${this.winningPrize}! 🎉`;
-            this.messageElement.style.color = "#22C55E";
-        } else {
-            this.messageElement.textContent = "Não foi dessa vez. 😔";
-            this.messageElement.style.color = "#EF4444";
-        }
-        
-        this.playAgainButton.classList.add("visible");
-        
-        // Registra a jogada e atualiza o saldo
-        const premio = this.hasWinner ? parseFloat(this.winningPrize.replace('R$ ', '').replace(',', '.')) : 0;
-        this.sendGameResult(this.hasWinner, premio);
-    }
-
-    resetGame() {
-        // Reset das variáveis
-        this.hasWinner = false;
-        this.winningPrize = null;
-        this.winningNote = null;
-        this.isMainScratched = false;
-        this.gameStarted = false;
-        
-        // Remove canvas existentes
-        const existingCanvases = document.querySelectorAll(".scratch-canvas, .individual-scratch-canvas");
-        existingCanvases.forEach(canvas => canvas.remove());
-        
-        // Reset da interface
-        this.mainScratchContainer.style.display = "flex";
-        this.scratchGrid.classList.add("hidden");
-        this.scratchGrid.classList.remove("visible");
-        
-        // Reset das áreas individuais
-        this.scratchAreas.forEach(area => {
-            area.classList.remove("prize", "money-note", "nothing");
-            area.innerHTML = "RASPE AQUI";
-            area.style.transform = "scale(1)";
-            area.style.position = "static";
-        });
-        
-        // Reset da mensagem e botão
-        this.messageElement.textContent = "";
-        this.messageElement.style.color = "white";
-        this.playAgainButton.classList.remove("visible");
-        
-        // Gera novos resultados e recria a área principal
-        this.generateGameResults();
-        this.createMainScratchCanvas();
-    }
-
-    // Função para descontar o saldo antes do jogo começar
-    deductBalance() {
-        fetch("descontar_saldo.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ valor_aposta: this.valorAposta }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.sucesso) {
-                this.updateBalance(data.saldo);
-            } else {
-                alert(data.erro || "Erro ao descontar saldo");
-                // Redireciona para a página inicial se não tiver saldo
-                window.location.href = "inicio.php";
-            }
-        })
-        .catch(error => {
-            console.error("Erro ao descontar saldo:", error);
-        });
-    }
-
-    // Função para enviar o resultado do jogo para o backend
-    sendGameResult(ganhou, premio) {
-        fetch("registrar_jogada.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ganhou: ganhou, premio: premio }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.saldo) {
-                this.updateBalance(data.saldo);
-            }
-        })
-        .catch(error => {
-            console.error("Erro ao registrar jogada:", error);
-        });
-    }
-
-    // Função para buscar e exibir o saldo atual
-    fetchBalance() {
-        fetch("get_balance.php")
-            .then(response => response.json())
-            .then(data => {
-                if (data.saldo) {
-                    this.updateBalance(data.saldo);
-                }
-            })
-            .catch(error => {
-                console.error("Erro ao buscar saldo:", error);
-            });
-    }
-
-    // Função para atualizar o saldo na interface
-    updateBalance(saldo) {
-        this.balanceButton.textContent = `Saldo: R$ ${saldo}`;
-    }
-}
-
-// Inicializa o jogo quando a página carrega
-document.addEventListener("DOMContentLoaded", () => {
-    new FortunaPixGame();
-});
-    </script>
+  </style>
 </head>
-<body>
-    <div class="game-container">
-        <div class="header">
-            <!-- Botão de Volta -->
-            <div class="header-controls">
-                <a href="inicio.php" class="back-button">
-                    <i class="fas fa-arrow-left"></i> Voltar
-                </a>
-                <div class="balance-button">Saldo: R$ <?= number_format($saldo, 2, ',', '.') ?></div>
-            </div>
-            
-            <?php if (!empty($bannerPersonalizado)): ?>
-                <img src="<?= htmlspecialchars($bannerPersonalizado) ?>" alt="<?= htmlspecialchars($nomeRaspadinha) ?> Banner" class="banner">
-            <?php else: ?>
-                <img src="./assets/banner_fortuna_pix.png" alt="Fortuna PIX Banner" class="banner">
-            <?php endif; ?>
+<body class="text-white min-h-screen">
+  
+  <nav class="desktop-nav">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <a href="#" class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
+          <i class="fas fa-coins text-white text-sm"></i>
         </div>
-        
-        <!-- Container principal para raspagem -->
-        <div class="main-scratch-container">
-            <div class="scratch-hint">Arraste o mouse ou dedo para raspar até 80%!</div>
-            <!-- Canvas será criado dinamicamente aqui -->
-        </div>
-        
-        <!-- Grid de áreas individuais -->
-        <div class="scratch-grid hidden">
-            <div class="scratch-area">RASPE AQUI</div>
-            <div class="scratch-area">RASPE AQUI</div>
-            <div class="scratch-area">RASPE AQUI</div>
-            <div class="scratch-area">RASPE AQUI</div>
-            <div class="scratch-area">RASPE AQUI</div>
-            <div class="scratch-area">RASPE AQUI</div>
-            <div class="scratch-area">RASPE AQUI</div>
-            <div class="scratch-area">RASPE AQUI</div>
-            <div class="scratch-area">RASPE AQUI</div>
-        </div>
-        
-        <div class="footer">
-            <p class="message"></p>
-            <button class="play-again-button">🎮 Jogar Novamente</button>
-        </div>
+        <h1 class="text-purple-400 font-extrabold text-xl">Raspa Sorte</h1>
+      </a>
+      
+      <div class="hidden md:flex items-center gap-4">
+        <span class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+          R$ <?= htmlspecialchars(number_format($saldo, 2, ',', '.')) ?>
+        </span>
+        <button onclick="abrirDeposito()" class="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
+          <i class="fas fa-dollar-sign"></i> Depositar
+        </button>
+        <a href="/perfil.php" class="text-gray-300 hover:text-white transition-colors">
+            <i class="fas fa-user-circle text-2xl"></i>
+        </a>
+        <a href="/logout.php" class="text-gray-300 hover:text-white transition-colors">
+            <i class="fas fa-sign-out-alt text-2xl"></i>
+        </a>
+      </div>
+
+      <div class="md:hidden flex items-center gap-2">
+        <span class="bg-green-700 text-white px-3 py-1.5 rounded-md text-xs font-semibold">
+          R$ <?= htmlspecialchars(number_format($saldo, 2, ',', '.')) ?>
+        </span>
+        <button onclick="abrirDeposito()" class="bg-yellow-500 text-black px-3 py-1.5 rounded-md text-xs font-bold">
+          Depositar
+        </button>
+      </div>
     </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto py-8">
+    <section class="px-4 mb-8">
+      <div class="carousel-container">
+        <div class="carousel-slide active" style="background-image: url('https://i.ibb.co/ynjjLXrZ/1752257985-1.webp' );"></div>
+        <div class="carousel-slide" style="background-image: url('https://i.ibb.co/XBDRyhQ/1752257991-1.webp' );"></div>
+        <div class="carousel-slide" style="background-image: url('https://i.ibb.co/ynjjLXrZ/1752257985-1.webp' );"></div>
+        <div class="carousel-indicators">
+          <div class="indicator active" onclick="goToSlide(0)"></div>
+          <div class="indicator" onclick="goToSlide(1)"></div>
+          <div class="indicator" onclick="goToSlide(2)"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="raspadinha-grid">
+      <div class="raspadinha-card">
+        <img src="https://i.ibb.co/xtc7XYtD/2.png" alt="Raspadinha 1 Real" class="w-full h-24 object-cover rounded-lg mb-4">
+        <span class="price-badge green">R$ 1,00</span>
+        <p class="prize-text">Prêmios até R$ 1.000,00</p>
+        <p class="game-description">Sonho de Consumo</p>
+        <a href="/jogo.php?valor=1" class="play-button">JOGAR AGORA</a>
+      </div>
+
+      <div class="raspadinha-card">
+        <img src="https://i.ibb.co/FRLNyjT/3.png" alt="Raspadinha 5 Reais" class="w-full h-24 object-cover rounded-lg mb-4">
+        <span class="price-badge orange">R$ 5,00</span>
+        <p class="prize-text">Prêmios até R$ 5.000,00</p>
+        <p class="game-description">Raspe da Emoção</p>
+        <a href="/jogo.php?valor=5" class="play-button">JOGAR AGORA</a>
+      </div>
+
+      <div class="raspadinha-card">
+        <img src="https://i.ibb.co/HTzqtMnt/1.png" alt="Raspadinha 10 Reais" class="w-full h-24 object-cover rounded-lg mb-4">
+        <span class="price-badge red">R$ 10,00</span>
+        <p class="prize-text">Prêmios até R$ 10.000,00</p>
+        <p class="game-description">Me mimei</p>
+        <a href="/jogo.php?valor=10" class="play-button">JOGAR AGORA</a>
+      </div>
+
+      <div class="raspadinha-card">
+        <img src="https://i.ibb.co/KjKHvr6R/4.png" alt="Raspadinha 20 Reais" class="w-full h-24 object-cover rounded-lg mb-4">
+        <span class="price-badge" style="background: linear-gradient(135deg, #8b5cf6, #a855f7 ); color: white;">R$ 20,00</span>
+        <p class="prize-text">Prêmios até R$ 20.000,00</p>
+        <p class="game-description">Super Prêmios</p>
+        <a href="/jogo.php?valor=20" class="play-button">JOGAR AGORA</a>
+      </div>
+    </section>
+  </main>
+
+  <div class="bottom-navbar">
+    <a href="#" class="nav-item active">
+      <i class="fas fa-home"></i>
+      <span>Início</span>
+    </a>
+    <a href="/jogo.php" class="nav-item">
+      <i class="fas fa-ticket-alt"></i>
+      <span>Jogar</span>
+    </a>
+    <a href="/premios" class="nav-item">
+      <i class="fas fa-trophy"></i>
+      <span>Prêmios</span>
+    </a>
+    <a href="/perfil.php" class="nav-item">
+      <i class="fas fa-user"></i>
+      <span>Perfil</span>
+    </a>
+    <div class="nav-item" onclick="abrirDeposito()">
+      <i class="fas fa-plus-circle"></i>
+      <span>Depositar</span>
+    </div>
+  </div>
+
+  <div id="modalDeposito" class="fixed inset-0 modal-overlay flex items-center justify-center z-[10000] hidden">
+    <div class="modal-content p-6">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold mb-2">Depositar via Pix</h2>
+        <p class="text-gray-400">Adicione saldo de forma rápida e segura.</p>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-2">Valor do Depósito</label>
+        <input id="valorDeposito" type="number" min="1" step="0.01" placeholder="Mínimo R$ 10,00" class="modal-input" />
+      </div>
+      <button onclick="gerarPix()" class="modal-button mb-4">Gerar Código Pix</button>
+      <button onclick="fecharDeposito()" class="cancel-button">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="qrMode" class="qr-mode hidden">
+    <div class="qr-container">
+      <div class="text-center mb-4">
+        <h2 class="text-xl font-bold">Pague com Pix</h2>
+        <p class="text-gray-400">Escaneie ou copie o código abaixo.</p>
+      </div>
+      <div class="qr-code-wrapper">
+        <canvas id="qrCodeCanvas"></canvas>
+      </div>
+      <div class="flex flex-col gap-3">
+        <button id="qrCopyBtn" class="qr-copy-btn">
+          <i class="fas fa-copy"></i>
+          Copiar código Pix
+        </button>
+        <button onclick="fecharQRMode()" class="qr-cancel-btn">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Gerenciamento de Modais ---
+    const modalDeposito = document.getElementById('modalDeposito');
+    const qrMode = document.getElementById('qrMode');
+    const body = document.body;
+
+    function abrirDeposito() {
+      modalDeposito.classList.remove('hidden');
+      body.classList.add('modal-open');
+    }
+
+    function fecharDeposito() {
+      modalDeposito.classList.add('hidden');
+      body.classList.remove('modal-open');
+    }
+
+    function abrirQRMode(pixCode) {
+      fecharDeposito();
+      
+      const qrCanvas = document.getElementById('qrCodeCanvas');
+      QRCode.toCanvas(qrCanvas, pixCode, { width: 250, margin: 1 }, function (error) {
+        if (error) console.error(error);
+      });
+
+      document.getElementById('qrCopyBtn').onclick = () => copiarPixCode(pixCode);
+      
+      qrMode.classList.remove('hidden');
+      body.classList.add('modal-open');
+    }
+
+    function fecharQRMode() {
+      qrMode.classList.add('hidden');
+      body.classList.remove('modal-open');
+    }
+
+    function copiarPixCode(codigo) {
+      navigator.clipboard.writeText(codigo).then(() => {
+        const copyBtn = document.getElementById('qrCopyBtn');
+        const originalText = copyBtn.innerHTML;
+        copyBtn.classList.add('copied');
+        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtn.innerHTML = originalText;
+        }, 2000);
+      }).catch(() => alert("Erro ao copiar o código Pix."));
+    }
+
+    // --- Lógica de Geração do PIX ---
+    async function gerarPix() {
+      const valorInput = document.getElementById('valorDeposito');
+      const valor = parseFloat(valorInput.value);
+      if (!valor || valor < 10) {
+        alert("O valor mínimo para depósito é R$ 10,00.");
+        valorInput.focus();
+        return;
+      }
+
+      try {
+        const response = await fetch("/gerar_pix_lotuspay.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ valor })
+        });
+        const data = await response.json();
+
+        if (data.erro) {
+          alert(data.erro);
+          return;
+        }
+        
+        if (data.qrcode) {
+          abrirQRMode(data.qrcode);
+        } else {
+          alert('Não foi possível obter o código PIX. Tente novamente.');
+        }
+
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+        alert('Ocorreu um erro ao gerar o código Pix. Verifique sua conexão e tente novamente.');
+      }
+    }
+
+    // --- Carousel ---
+    let currentSlide = 0;
+    const slides = document.querySelectorAll(".carousel-slide");
+    const indicators = document.querySelectorAll(".indicator");
+    const totalSlides = slides.length;
+    let slideInterval;
+
+    function updateCarousel(index) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        indicators.forEach(indicator => indicator.classList.remove('active'));
+        
+        slides[index].classList.add('active');
+        indicators[index].classList.add('active');
+        currentSlide = index;
+    }
+
+    function nextSlide() {
+        const nextIndex = (currentSlide + 1) % totalSlides;
+        updateCarousel(nextIndex);
+    }
+    
+    function goToSlide(index) {
+        updateCarousel(index);
+        clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    slideInterval = setInterval(nextSlide, 5000);
+
+    // --- Fechar modais ao clicar fora ---
+    modalDeposito.addEventListener('click', (e) => {
+        if (e.target === modalDeposito) fecharDeposito();
+    });
+    qrMode.addEventListener('click', (e) => {
+        if (e.target === qrMode) fecharQRMode();
+    });
+
+  </script>
 </body>
 </html>
-

@@ -15,7 +15,7 @@ function logWebhook($message, $data = null) {
         mkdir('logs', 0755, true);
     }
     
-    file_put_contents('logs/webhook_bspay.log', $logMessage, FILE_APPEND | LOCK_EX);
+    file_put_contents('logs/webhook_lotuspay.log', $logMessage, FILE_APPEND | LOCK_EX);
 }
 
 // Configurar headers para resposta
@@ -37,22 +37,21 @@ if (!$data) {
 
 logWebhook("Dados decodificados", $data);
 
-// Verifica se tem requestBody (formato da documentação BSPay)
-if (isset($data['requestBody'])) {
+// Suporta múltiplos formatos (Lotuspay e variações). Se houver requestBody, usa-o; senão usa o corpo direto
+if (isset($data['requestBody']) && is_array($data['requestBody'])) {
     $eventData = $data['requestBody'];
     logWebhook("Usando formato requestBody", $eventData);
 } else {
-    // Fallback para formato direto
     $eventData = $data;
     logWebhook("Usando formato direto", $eventData);
 }
 
-// Extrai os dados do pagamento
-$external_id = $eventData['external_id'] ?? '';
-$amount = floatval($eventData['amount'] ?? 0);
-$status = $eventData['status'] ?? '';
-$transactionType = $eventData['transactionType'] ?? '';
-$transactionId = $eventData['transactionId'] ?? '';
+// Extrai os dados do pagamento (campos mais comuns entre gateways)
+$external_id = $eventData['external_id'] ?? ($eventData['publicId'] ?? ($eventData['id'] ?? ''));
+$amount = floatval($eventData['amount'] ?? ($eventData['value'] ?? 0));
+$status = strtoupper((string)($eventData['status'] ?? ''));
+$transactionType = $eventData['transactionType'] ?? ($eventData['type'] ?? '');
+$transactionId = $eventData['transactionId'] ?? ($eventData['txid'] ?? ($eventData['id'] ?? ''));
 
 logWebhook("Dados extraídos", [
     'external_id' => $external_id,
@@ -62,8 +61,9 @@ logWebhook("Dados extraídos", [
     'transactionId' => $transactionId
 ]);
 
-// Processa apenas transações de recebimento PIX com status PAID
-if ($transactionType === 'RECEIVEPIX' && $status === 'PAID') {
+// Processa pagamentos confirmados (flexível a múltiplos gateways)
+$paidStatuses = ['PAID', 'CONFIRMED', 'APPROVED', 'SUCCESS'];
+if (in_array($status, $paidStatuses, true)) {
     
     if ($external_id && $amount > 0) {
         // Busca o depósito pendente na tabela deposits
@@ -108,7 +108,7 @@ if ($transactionType === 'RECEIVEPIX' && $status === 'PAID') {
                 // Verifica se o update do saldo foi bem-sucedido
                 if ($stmt->affected_rows > 0) {
                     // Registra a transação
-                    $stmt = $conn->prepare("INSERT INTO transacoes (usuario_id, tipo, valor, descricao, status) VALUES (?, 'deposito_aprovado', ?, 'Depósito aprovado via BSPay', 'concluido')");
+                    $stmt = $conn->prepare("INSERT INTO transacoes (usuario_id, tipo, valor, descricao, status) VALUES (?, 'deposito_aprovado', ?, 'Depósito aprovado via Lotuspay', 'concluido')");
                     $stmt->bind_param("id", $deposito['user_id'], $amount);
                     $stmt->execute();
                     

@@ -121,22 +121,22 @@
       qrCodeResult.classList.add("hidden");
 
       try {
-        const response = await fetch("bspay_api.php", {
+        const response = await fetch("gerar_pix_lotuspay.php", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: `action=generate_qrcode&amount=${amount}&cpf=${cpf}`,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount })
         });
 
         const data = await response.json();
 
-        if (data.status) {
-          qrCodeImage.src = `data:image/png;base64,${data.qrcode}`;
-          pixCopyPaste.value = data.pix_copy_paste;
+        if (data.qrcode) {
+          // Renderiza QR via serviço de QR público usando o texto EMV recebido
+          const qrcodeText = encodeURIComponent(data.qrcode);
+          qrCodeImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${qrcodeText}`;
+          pixCopyPaste.value = data.qrcode;
           qrCodeResult.classList.remove("hidden");
         } else {
-          errorMessage.textContent = data.message || "Erro ao gerar QR Code.";
+          errorMessage.textContent = data.erro || data.message || "Erro ao gerar QR Code.";
           errorMessage.classList.remove("hidden");
         }
       } catch (error) {
