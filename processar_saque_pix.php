@@ -122,22 +122,28 @@ try {
         $callbackUrl = $scheme . '://' . $host . '/webhook_lotuspay.php';
 
         $payload = [
-            'amount' => $valor,
-            'external_id' => $externalId,
-            'recipient' => [
-                'name' => $nomeCompleto ?: ($usuario['name'] ?? 'Cliente'),
-                'document' => $docUsuario,
-                'pix' => [
-                    'key_type' => $keyType,
-                    'key' => $chavePix,
+            // Formato Lotuspay solicitado
+            'pixKeyType' => $keyType, // cpf | email | phone | random
+            'pixKey' => $chavePix,
+            'customer' => [
+                'document' => [
+                    'type' => 'cpf',
+                    'number' => $docUsuario,
                 ],
+                'name' => $nomeCompleto ?: ($usuario['name'] ?? 'Cliente'),
+                'email' => $usuario['email'] ?? null,
+                'phone' => $_POST['phone'] ?? null,
             ],
+            'amount' => $valor,
+            'callbackUrl' => $callbackUrl,
+
+            // Campos adicionais úteis para rastreio/idempotência
+            'external_id' => $externalId,
             'metadata' => [
                 'user_id' => $userId,
                 'withdraw_id' => $saqueId,
                 'origin' => 'site',
             ],
-            'callbackUrl' => $callbackUrl,
         ];
 
         // Chamar API LotusPay (pode lançar exceção)
