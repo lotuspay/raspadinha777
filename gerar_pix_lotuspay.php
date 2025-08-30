@@ -36,6 +36,18 @@ try {
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $callbackUrl = $scheme . '://' . $host . '/webhook_lotuspay.php';
 
+    // Garante telefone válido (string) para a API
+    $phone = $input['customer']['phone'] ?? ($input['phone'] ?? null);
+    if (empty($phone)) {
+        $phone = '119' . str_pad((string)random_int(0, 99999999), 8, '0', STR_PAD_LEFT);
+    } else {
+        $phone = preg_replace('/\D/', '', (string)$phone);
+        if (strlen($phone) < 10) {
+            // completa se vier curto
+            $phone = '11' . str_pad($phone, 9, '0', STR_PAD_RIGHT);
+        }
+    }
+
     // Payload LotusPay com campos obrigatórios (documento como objeto e telefone opcional)
     $payload = [
         'amount' => $valor,
@@ -47,7 +59,7 @@ try {
                 'number' => $customerDocument,
             ],
             'email' => $user['email'] ?? null,
-            'phone' => $input['customer']['phone'] ?? ($input['phone'] ?? null),
+            'phone' => $phone,
         ],
         'callbackUrl' => $callbackUrl,
         'metadata' => [
@@ -56,7 +68,25 @@ try {
         ]
     ];
 
-    $response = $lotus->cashIn($payload);
+    // Tenta até 3 vezes em caso de erro 5xx transitório
+    $response = null;
+    $attempts = 0;
+    $lastErr = null;
+    while ($attempts < 3) {
+        try {
+            $attempts++;
+            $response = $lotus->cashIn($payload);
+            break;
+        } catch (Exception $ex) {
+            $lastErr = $ex;
+            $msg = $ex->getMessage();
+            error_log('[LotusPay cashIn] tentativa ' . $attempts . ' falhou: ' . $msg);
+            if ($attempts >= 3 || (strpos($msg, '502') === false && strpos($msg, '503') === false && strpos($msg, '504') === false)) {
+                throw $ex; // não é 5xx ou esgotou tentativas
+            }
+            usleep(250000 * $attempts); // backoff 250ms, 500ms, 750ms
+        }
+    }
 
     // Log básico
     error_log("Resposta da LotusPay para Pix: " . json_encode($response));

@@ -51,7 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
             $callbackUrl = $scheme . '://' . $host . '/webhook_lotuspay.php';
 
-            // Payload para gerar cobrança PIX via Lotuspay (documento como objeto e telefone opcional)
+            // Gera telefone padrão se não informado
+            $phone = $_POST['phone'] ?? ($_POST['customer']['phone'] ?? null);
+            if (empty($phone)) {
+                $phone = '119' . str_pad((string)random_int(0, 99999999), 8, '0', STR_PAD_LEFT);
+            } else {
+                $phone = preg_replace('/\D/', '', (string)$phone);
+                if (strlen($phone) < 10) {
+                    $phone = '11' . str_pad($phone, 9, '0', STR_PAD_RIGHT);
+                }
+            }
+
+            // Payload para gerar cobrança PIX via Lotuspay (documento como objeto e telefone obrigatório)
             $payload = [
                 'amount' => $valor,
                 'external_id' => $external_id,
@@ -62,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'number' => $customerDocument,
                     ],
                     'email' => $user['email'] ?? null,
-                    'phone' => $_POST['phone'] ?? ($_POST['customer']['phone'] ?? null),
+                    'phone' => $phone,
                 ],
                 'callbackUrl' => $callbackUrl,
                 'metadata' => [
@@ -72,8 +83,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]
             ];
             
-            // Solicita a cobrança PIX
-            $response = $lotus->cashIn($payload);
+            // Solicita a cobrança PIX com retry em caso de erro 5xx
+            $response = null;
+            $attempts = 0;
+            while ($attempts < 3) {
+                try {
+                    $attempts++;
+                    $response = $lotus->cashIn($payload);
+                    break;
+                } catch (Exception $ex) {
+                    $msg = $ex->getMessage();
+                    error_log('[LotusPay cashIn-depositar] tentativa ' . $attempts . ' falhou: ' . $msg);
+                    if ($attempts >= 3 || (strpos($msg, '502') === false && strpos($msg, '503') === false && strpos($msg, '504') === false)) {
+                        throw $ex;
+                    }
+                    usleep(250000 * $attempts);
+                }
+            }
             
             // Salva o depósito pendente no banco
             $stmt = $conn->prepare("INSERT INTO depositos (usuario_id, valor, status, external_id, qr_code, pix_code, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
