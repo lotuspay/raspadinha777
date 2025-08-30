@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: /login.php');
+    exit;
+}
 require 'includes/db.php';
 //require 'includes/auth.php';
 

@@ -22,7 +22,7 @@ require 'includes/auth.php';
       <h2 class="text-xl font-bold text-gray-800">Esperança</h2>
       <p class="mt-2 text-gray-600">Prêmio Máximo: <span class="text-green-600 font-bold">R$ 50,00</span></p>
       <p class="text-gray-600">Chance: <span class="text-blue-600 font-bold">0.50%</span></p>
-      <a href="jogo.php?raspadinha=esperanca&valor=1.00" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full transition">JOGAR</a>
+      <a href="jogo/?raspadinha=esperanca&valor=1.00" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full transition">JOGAR</a>
     </div>
 
     <!-- Raspadinha Alegria -->
@@ -31,7 +31,7 @@ require 'includes/auth.php';
       <h2 class="text-xl font-bold text-gray-800">Alegria</h2>
       <p class="mt-2 text-gray-600">Prêmio Máximo: <span class="text-green-600 font-bold">R$ 100,00</span></p>
       <p class="text-gray-600">Chance: <span class="text-blue-600 font-bold">0.04%</span></p>
-      <a href="jogo.php?raspadinha=alegria&valor=2.00" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full transition">JOGAR</a>
+      <a href="jogo/?raspadinha=alegria&valor=2.00" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full transition">JOGAR</a>
     </div>
 
     <!-- Raspadinha Emoção -->
@@ -40,7 +40,7 @@ require 'includes/auth.php';
       <h2 class="text-xl font-bold text-gray-800">Emoção</h2>
       <p class="mt-2 text-gray-600">Prêmio Máximo: <span class="text-green-600 font-bold">R$ 500,00</span></p>
       <p class="text-gray-600">Chance: <span class="text-blue-600 font-bold">0.03%</span></p>
-      <a href="jogo.php?raspadinha=emocao&valor=20.00" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full transition">JOGAR</a>
+      <a href="jogo/?raspadinha=emocao&valor=20.00" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-full transition">JOGAR</a>
     </div>
   </div>
 </body>

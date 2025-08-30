@@ -259,7 +259,7 @@ Implementar uma funcionalidade de "Teste Prêmios" que permite selecionar raspad
 - **Interface dinâmica:** Atualização em tempo real dos resultados
 
 ### 6. **Integração com Sistema RTP**
-- **Endpoint:** `../jogo.php` com parâmetro `teste_premio=1`
+- **Endpoint:** `../jogo/` com parâmetro `teste_premio=1`
 - **Simulação real:** Utiliza a mesma lógica de RTP do jogo principal
 - **Resultado instantâneo:** Mostra imediatamente se ganhou ou perdeu
 - **Valores reais:** Exibe prêmios conforme configuração do sistema
@@ -556,7 +556,7 @@ A aba de relatório de afiliados no arquivo `global_settings.php` não estava co
 - **Resultado:** Experiência otimizada em todos os dispositivos
 
 ### 4. **Funcionalidade JavaScript**
-- **Problema:** Requisição para endpoint incorreto (`../jogo.php` em vez de `../jogar.php`)
+- **Problema:** Requisição para endpoint incorreto (`../jogo/` em vez de `../jogar.php`)
 - **Solução:** Corrigido endpoint e parâmetros (`teste_premio=1` em vez de `teste_rtp=1`)
 - **Resultado:** Testes funcionando corretamente com a API real
 
@@ -670,7 +670,7 @@ A aba de relatório de afiliados no arquivo `global_settings.php` não estava co
 ### Endpoint Corrigido
 ```javascript
 // Antes (incorreto)
-fetch('../jogo.php', {
+fetch('../jogo/', {
     body: `valor=${valor}&teste_rtp=1&usuario_teste=teste_usuario_ilimitado`
 });
 
@@ -711,7 +711,7 @@ A aba "Teste Prêmios" agora apresenta:
 ## Arquivos Modificados
 1. **`c:\xampp\htdocs\admin\controle_raspadinha.php`**
    - Adicionados 130+ linhas de CSS para cards específicos
-   - Corrigido endpoint JavaScript de `../jogo.php` para `../jogar.php`
+   - Corrigido endpoint JavaScript de `../jogo/` para `../jogar.php`
    - Adicionada função `inicializarTesteAutomatizado()`
    - Implementadas media queries responsivas
    - Melhorados estilos de progress bar e status items

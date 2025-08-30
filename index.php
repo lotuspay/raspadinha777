@@ -421,7 +421,7 @@ $saldo = $usuario['balance'];
         <span class="price-badge green">R$ 1,00</span>
         <p class="prize-text">Prêmios até R$ 1.000,00</p>
         <p class="game-description">Sonho de Consumo</p>
-        <a href="/jogo.php?valor=1" class="play-button">JOGAR AGORA</a>
+        <a href="/jogo/?valor=1" class="play-button">JOGAR AGORA</a>
       </div>
 
       <div class="raspadinha-card">
@@ -429,7 +429,7 @@ $saldo = $usuario['balance'];
         <span class="price-badge orange">R$ 5,00</span>
         <p class="prize-text">Prêmios até R$ 5.000,00</p>
         <p class="game-description">Raspe da Emoção</p>
-        <a href="/jogo.php?valor=5" class="play-button">JOGAR AGORA</a>
+        <a href="/jogo/?valor=5" class="play-button">JOGAR AGORA</a>
       </div>
 
       <div class="raspadinha-card">
@@ -437,7 +437,7 @@ $saldo = $usuario['balance'];
         <span class="price-badge red">R$ 10,00</span>
         <p class="prize-text">Prêmios até R$ 10.000,00</p>
         <p class="game-description">Me mimei</p>
-        <a href="/jogo.php?valor=10" class="play-button">JOGAR AGORA</a>
+        <a href="/jogo/?valor=10" class="play-button">JOGAR AGORA</a>
       </div>
 
       <div class="raspadinha-card">
@@ -445,7 +445,7 @@ $saldo = $usuario['balance'];
         <span class="price-badge" style="background: linear-gradient(135deg, #8b5cf6, #a855f7 ); color: white;">R$ 20,00</span>
         <p class="prize-text">Prêmios até R$ 20.000,00</p>
         <p class="game-description">Super Prêmios</p>
-        <a href="/jogo.php?valor=20" class="play-button">JOGAR AGORA</a>
+        <a href="/jogo/?valor=20" class="play-button">JOGAR AGORA</a>
       </div>
     </section>
   </main>
@@ -455,7 +455,7 @@ $saldo = $usuario['balance'];
       <i class="fas fa-home"></i>
       <span>Início</span>
     </a>
-    <a href="/jogo.php" class="nav-item">
+    <a href="/jogo/" class="nav-item">
       <i class="fas fa-ticket-alt"></i>
       <span>Jogar</span>
     </a>

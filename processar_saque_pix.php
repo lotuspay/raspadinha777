@@ -119,7 +119,7 @@ try {
         // Callback URL
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $callbackUrl = $scheme . '://' . $host . '/webhook_bspay_novo.php';
+        $callbackUrl = $scheme . '://' . $host . '/webhook_lotuspay.php';
 
         $payload = [
             'amount' => $valor,

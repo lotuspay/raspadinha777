@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $customerDocument = str_pad((string)random_int(0, 99999999999), 11, '0', STR_PAD_LEFT);
             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
             $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            $callbackUrl = $scheme . '://' . $host . '/webhook_bspay_novo.php';
+            $callbackUrl = $scheme . '://' . $host . '/webhook_lotuspay.php';
 
             // Payload para gerar cobrança PIX via Lotuspay
             $payload = [

@@ -84,7 +84,7 @@ $stmt->execute();
 $direct_referrals = $stmt->get_result();
 
 // Gerar link de afiliado
-$affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/inicio.php?ref=" . $affiliate_code;
+$affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/index.php?ref=" . $affiliate_code;
 ?>
 
 <!DOCTYPE html>
@@ -390,14 +390,14 @@ $affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/inicio.php?ref=" . $affi
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="inicio.php">
+            <a class="navbar-brand" href="index.php">
                 <i class="bi bi-coins"></i> Raspa Sorte - Afiliados
             </a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link text-white" href="perfil.php">
                     <i class="bi bi-person"></i> Perfil
                 </a>
-                <a class="nav-link text-white" href="raspadinhas">
+                <a class="nav-link text-white" href="index.php">
                     <i class="bi bi-box-arrow-right"></i> Inicio 
                 </a>
             </div>
