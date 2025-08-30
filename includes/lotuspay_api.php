@@ -3,7 +3,7 @@
 
 class LotusPayAPI {
     private const BASE_URL = 'https://api.lotuspay.me';
-    private const API_TOKEN = 'lp_7878702b30ad6c809c7e5302199d44c9f90157d188fd151eeb702bb15e889212';
+    private const API_TOKEN = 'token aqui';
 
     private function request(string $method, string $path, ?array $body = null) {
         $url = rtrim(self::BASE_URL, '/') . $path;
