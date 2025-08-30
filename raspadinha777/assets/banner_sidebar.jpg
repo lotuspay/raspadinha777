@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="600" viewBox="0 0 300 600">
+  <defs>
+    <linearGradient id="sidebarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="600" fill="url(#sidebarGrad)"/>
+  <text x="150" y="300" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#ffffff" opacity="0.9" transform="rotate(-90 150 300)">Sidebar Banner</text>
+  <circle cx="75" cy="100" r="25" fill="#ffffff" opacity="0.2"/>
+  <circle cx="225" cy="500" r="30" fill="#ffffff" opacity="0.2"/>
+  <rect x="50" y="250" width="200" height="100" fill="#ffffff" opacity="0.1" rx="10"/>
+</svg>

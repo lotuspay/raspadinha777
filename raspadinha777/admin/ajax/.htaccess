@@ -1,0 +1,8 @@
+# Desabilitar regras de reescrita para arquivos AJAX
+RewriteEngine Off
+
+# Permitir acesso direto aos arquivos PHP
+<Files "*.php">
+    Order allow,deny
+    Allow from all
+</Files>
