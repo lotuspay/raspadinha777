@@ -50,29 +50,27 @@ try {
 
     // Payload LotusPay com campos obrigatórios (documento como objeto e telefone opcional)
     $payload = [
-        'amount' => $valor,
-        'external_id' => $external_id,
         'customer' => [
-            'name' => $user['name'] ?? 'Cliente',
             'document' => [
                 'type' => 'cpf',
                 'number' => $customerDocument,
             ],
-            'email' => $user['email'] ?? null,
+            'name' => $user['name'] ?? 'Cliente Anônimo',
+            'email' => $user['email'] ?? 'email@exemplo.com',
             'phone' => $phone,
         ],
+        'amount' => $valor,
         'callbackUrl' => $callbackUrl,
-        'metadata' => [
-            'user_id' => $user_id,
-            'origin' => 'site',
-        ]
     ];
 
-    // Tenta até 3 vezes em caso de erro 5xx transitório
+    // Loga o payload enviado
+    error_log('LotusPay cashIn payload: ' . json_encode($payload, JSON_UNESCAPED_UNICODE));
+
+    // Tenta até 2 vezes em caso de erro 5xx transitório
     $response = null;
     $attempts = 0;
     $lastErr = null;
-    while ($attempts < 3) {
+    while ($attempts < 2) {
         try {
             $attempts++;
             $response = $lotus->cashIn($payload);
@@ -91,19 +89,27 @@ try {
     // Log básico
     error_log("Resposta da LotusPay para Pix: " . json_encode($response));
 
-    // Normaliza possíveis campos do código Pix
-    $pixCode = $response['qrcode'] ?? ($response['pix_code'] ?? ($response['qr_code'] ?? ($response['emv'] ?? null)));
+    // Normaliza campos do retorno
+    $providerId = $response['id'] ?? null;
+    $providerStatus = $response['status'] ?? null;
+    $qrCode = $response['qrCode'] ?? ($response['qrcode'] ?? ($response['pix_code'] ?? ($response['qr_code'] ?? ($response['emv'] ?? null))));
+    $qrCodeBase64 = $response['qrCodeBase64'] ?? null;
 
-    if (!empty($pixCode)) {
+    if (!empty($qrCode)) {
+        if (empty($qrCodeBase64)) {
+            $qrCodeBase64 = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($qrCode);
+        }
+
         // Insere o depósito como pendente na tabela deposits
         $stmt = $conn->prepare("INSERT INTO deposits (user_id, amount, status, payment_id, created_at, updated_at, external_id) VALUES (?, ?, 'pendente', NULL, NOW(), NOW(), ?)");
         $stmt->bind_param("ids", $user_id, $valor, $external_id);
         $stmt->execute();
 
         echo json_encode([
-            'qrcode' => $pixCode,
-            'external_id' => $external_id,
-            'amount' => $valor
+            'id' => $providerId,
+            'status' => $providerStatus,
+            'qrCode' => $qrCode,
+            'qrCodeBase64' => $qrCodeBase64,
         ]);
     } else {
         echo json_encode([

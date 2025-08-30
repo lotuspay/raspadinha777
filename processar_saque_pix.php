@@ -121,6 +121,17 @@ try {
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
         $callbackUrl = $scheme . '://' . $host . '/webhook_lotuspay.php';
 
+        // Garante telefone válido
+        $phone = $_POST['phone'] ?? null;
+        if (empty($phone)) {
+            $phone = '119' . str_pad((string)random_int(0, 99999999), 8, '0', STR_PAD_LEFT);
+        } else {
+            $phone = preg_replace('/\D/', '', (string)$phone);
+            if (strlen($phone) < 10) {
+                $phone = '11' . str_pad($phone, 9, '0', STR_PAD_RIGHT);
+            }
+        }
+
         $payload = [
             // Formato Lotuspay solicitado
             'pixKeyType' => $keyType, // cpf | email | phone | random
@@ -132,7 +143,7 @@ try {
                 ],
                 'name' => $nomeCompleto ?: ($usuario['name'] ?? 'Cliente'),
                 'email' => $usuario['email'] ?? null,
-                'phone' => $_POST['phone'] ?? null,
+                'phone' => $phone,
             ],
             'amount' => $valor,
             'callbackUrl' => $callbackUrl,
@@ -146,9 +157,27 @@ try {
             ],
         ];
 
-        // Chamar API LotusPay (pode lançar exceção)
+        // Loga o payload de cashOut
+        error_log('LotusPay cashOut payload: ' . json_encode($payload, JSON_UNESCAPED_UNICODE));
+
+        // Chamar API LotusPay com retry simples para 5xx
         $lotus = new LotusPayAPI();
-        $cashoutRes = $lotus->cashOut($payload);
+        $cashoutRes = null;
+        $attempts = 0;
+        while ($attempts < 3) {
+            try {
+                $attempts++;
+                $cashoutRes = $lotus->cashOut($payload);
+                break;
+            } catch (Exception $ex) {
+                $msg = $ex->getMessage();
+                error_log('[LotusPay cashOut] tentativa ' . $attempts . ' falhou: ' . $msg);
+                if ($attempts >= 3 || (strpos($msg, '502') === false && strpos($msg, '503') === false && strpos($msg, '504') === false)) {
+                    throw $ex;
+                }
+                usleep(250000 * $attempts);
+            }
+        }
 
         // Atualizar registro do saque com informações da provedora
         $obs = 'LotusPay cashOut response: ' . json_encode($cashoutRes, JSON_UNESCAPED_UNICODE);
@@ -174,12 +203,12 @@ try {
         // Confirmar transação
         $conn->commit();
 
+        // Resposta padronizada do saque: apenas id e status
+        $cashoutId = $cashoutRes['id'] ?? null;
+        $cashoutStatus = $cashoutRes['status'] ?? null;
         echo json_encode([
-            'success' => true,
-            'message' => 'Solicitação de saque enviada com sucesso! Em processamento.',
-            'saque_id' => $saqueId,
-            'external_id' => $externalId,
-            'novo_saldo' => $novoSaldo,
+            'id' => $cashoutId,
+            'status' => $cashoutStatus,
         ]);
 
     } catch (Exception $e) {

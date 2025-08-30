@@ -64,29 +64,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Payload para gerar cobrança PIX via Lotuspay (documento como objeto e telefone obrigatório)
             $payload = [
-                'amount' => $valor,
-                'external_id' => $external_id,
                 'customer' => [
-                    'name' => $user['name'] ?? 'Cliente',
                     'document' => [
                         'type' => 'cpf',
                         'number' => $customerDocument,
                     ],
-                    'email' => $user['email'] ?? null,
+                    'name' => $user['name'] ?? 'Cliente Anônimo',
+                    'email' => $user['email'] ?? 'email@exemplo.com',
                     'phone' => $phone,
                 ],
+                'amount' => $valor,
                 'callbackUrl' => $callbackUrl,
-                'metadata' => [
-                    'user_id' => $user['id'] ?? $user_id,
-                    'name' => $user['name'] ?? null,
-                    'email' => $user['email'] ?? null,
-                ]
             ];
+        
+
+            // Log do payload enviado para auditoria
+            error_log('LotusPay cashIn (depositar.php) payload: ' . json_encode($payload, JSON_UNESCAPED_UNICODE));
             
             // Solicita a cobrança PIX com retry em caso de erro 5xx
             $response = null;
             $attempts = 0;
-            while ($attempts < 3) {
+            while ($attempts < 2) {
                 try {
                     $attempts++;
                     $response = $lotus->cashIn($payload);
@@ -107,21 +105,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt === false) {
                 $error = 'Erro na preparação da consulta: ' . $conn->error;
             } else {
-                // Normaliza possíveis campos de retorno do código Pix
-                $pix_code = $response['qrcode'] ?? ($response['pix_code'] ?? ($response['qr_code'] ?? ($response['emv'] ?? '')));
+                // Extrai campos padronizados do retorno
+                $providerId = $response['id'] ?? null;
+                $providerStatus = $response['status'] ?? 'Pending';
+                $qrCode = $response['qrCode'] ?? ($response['qrcode'] ?? ($response['pix_code'] ?? ($response['qr_code'] ?? ($response['emv'] ?? ''))));
+                $qrCodeBase64 = $response['qrCodeBase64'] ?? null;
+
+                // Persiste referência mínima no banco (mantém compatibilidade com colunas existentes)
+                $pix_code = $qrCode;
                 $qr_code = '';
                 $status = 'pendente';
                 $stmt->bind_param("idssss", $user_id, $valor, $status, $external_id, $qr_code, $pix_code);
                 $stmt->execute();
-                
-                // Gera QR Code visual
-                if ($pix_code) {
-                    $qr_code_image = QRGenerator::gerarQRCodePIX($pix_code);
+
+                // Escolhe imagem do QR: prioriza a fornecida pela API; senão, gera localmente
+                if ($qrCode) {
+                    $qr_code_image = $qrCodeBase64 ?: QRGenerator::gerarQRCodePIX($qrCode);
+                    // Dados para exibir ao usuário no formato solicitado
                     $qr_code_data = [
-                        'external_id' => $external_id,
-                        'valor' => $valor,
-                        'pix_code' => $pix_code,
-                        'qr_image' => $qr_code_image
+                        'id' => $providerId,
+                        'status' => $providerStatus,
+                        'qrCode' => $qrCode,
+                        'qrCodeBase64' => $qrCodeBase64 ?: $qr_code_image,
                     ];
                     $success = 'QR Code gerado com sucesso! Escaneie para realizar o pagamento.';
                 } else {
