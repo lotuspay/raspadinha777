@@ -108,8 +108,12 @@ try {
         echo json_encode([
             'id' => $providerId,
             'status' => $providerStatus,
+            // Campos originais
             'qrCode' => $qrCode,
             'qrCodeBase64' => $qrCodeBase64,
+            // Aliases para compatibilidade com o frontend atual
+            'qrcode' => $qrCode,
+            'qrcode_base64' => $qrCodeBase64,
         ]);
     } else {
         echo json_encode([

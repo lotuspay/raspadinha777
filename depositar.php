@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Solicita a cobrança PIX com retry em caso de erro 5xx
             $response = null;
             $attempts = 0;
-            while ($attempts < 2) {
+            while ($attempts < 3) {
                 try {
                     $attempts++;
                     $response = $lotus->cashIn($payload);
@@ -99,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
-            // Salva o depósito pendente no banco
-            $stmt = $conn->prepare("INSERT INTO depositos (usuario_id, valor, status, external_id, qr_code, pix_code, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+            // Salva o depósito pendente no banco (tabela unificada: deposits)
+            $stmt = $conn->prepare("INSERT INTO deposits (user_id, amount, status, payment_id, created_at, updated_at, external_id) VALUES (?, ?, 'pendente', NULL, NOW(), NOW(), ?)");
             
             if ($stmt === false) {
                 $error = 'Erro na preparação da consulta: ' . $conn->error;
@@ -111,11 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $qrCode = $response['qrCode'] ?? ($response['qrcode'] ?? ($response['pix_code'] ?? ($response['qr_code'] ?? ($response['emv'] ?? ''))));
                 $qrCodeBase64 = $response['qrCodeBase64'] ?? null;
 
-                // Persiste referência mínima no banco (mantém compatibilidade com colunas existentes)
-                $pix_code = $qrCode;
-                $qr_code = '';
-                $status = 'pendente';
-                $stmt->bind_param("idssss", $user_id, $valor, $status, $external_id, $qr_code, $pix_code);
+                // Persiste referência mínima no banco compatível com webhook (sem armazenar QR no banco)
+                $stmt->bind_param("ids", $user_id, $valor, $external_id);
                 $stmt->execute();
 
                 // Escolhe imagem do QR: prioriza a fornecida pela API; senão, gera localmente

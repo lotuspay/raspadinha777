@@ -578,8 +578,9 @@ $saldo = $usuario['balance'];
           return;
         }
         
-        if (data.qrcode) {
-          abrirQRMode(data.qrcode);
+        const pixCode = data.qrcode || data.qrCode;
+        if (pixCode) {
+          abrirQRMode(pixCode);
         } else {
           alert('Não foi possível obter o código PIX. Tente novamente.');
         }
