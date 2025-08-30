@@ -51,14 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
             $callbackUrl = $scheme . '://' . $host . '/webhook_lotuspay.php';
 
-            // Payload para gerar cobrança PIX via Lotuspay
+            // Payload para gerar cobrança PIX via Lotuspay (documento como objeto e telefone opcional)
             $payload = [
                 'amount' => $valor,
                 'external_id' => $external_id,
                 'customer' => [
                     'name' => $user['name'] ?? 'Cliente',
-                    'document' => $customerDocument,
+                    'document' => [
+                        'type' => 'cpf',
+                        'number' => $customerDocument,
+                    ],
                     'email' => $user['email'] ?? null,
+                    'phone' => $_POST['phone'] ?? ($_POST['customer']['phone'] ?? null),
                 ],
                 'callbackUrl' => $callbackUrl,
                 'metadata' => [

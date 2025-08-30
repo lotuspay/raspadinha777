@@ -36,14 +36,18 @@ try {
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $callbackUrl = $scheme . '://' . $host . '/webhook_lotuspay.php';
 
-    // Payload LotusPay com campos obrigatórios
+    // Payload LotusPay com campos obrigatórios (documento como objeto e telefone opcional)
     $payload = [
         'amount' => $valor,
         'external_id' => $external_id,
         'customer' => [
             'name' => $user['name'] ?? 'Cliente',
-            'document' => $customerDocument,
+            'document' => [
+                'type' => 'cpf',
+                'number' => $customerDocument,
+            ],
             'email' => $user['email'] ?? null,
+            'phone' => $input['customer']['phone'] ?? ($input['phone'] ?? null),
         ],
         'callbackUrl' => $callbackUrl,
         'metadata' => [
