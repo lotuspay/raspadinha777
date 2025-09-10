@@ -120,3 +120,5 @@ Stack trace:
 Stack trace:
 #0 {main}
   thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 17:52:11 UTC] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in D:\WindSurfProjects\github\raspadinha777\includes\GoogleAuthenticator.php on line 112
+[10-Sep-2025 17:52:11 UTC] PHP Deprecated:  Using ${var} in strings is deprecated, use {$var} instead in D:\WindSurfProjects\github\raspadinha777\includes\GoogleAuthenticator.php on line 112

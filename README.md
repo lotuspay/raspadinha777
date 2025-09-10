@@ -3,6 +3,8 @@
 Script baixado da internet e adaptado para o gateway Lotuspay.
 Fornecido sem qualquer garantia.
 
+Obs.: Utilize na URL /premios como presell. (lp).
+
 ## Configuração Inicial
 
 ### 1. Configuração do Banco de Dados
