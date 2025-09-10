@@ -500,7 +500,7 @@
             <p class="text-xl text-gray-300 mb-8">Junte-se a milhares de pessoas que já transformaram suas vidas</p>
            <button 
     class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-12 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl" 
-    onclick="window.location.href='/raspadinhas';"
+    onclick="window.location.href='/';"
 >
     <i class="fas fa-play mr-3"></i>
     Começar Agora

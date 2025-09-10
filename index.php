@@ -404,7 +404,7 @@ $saldo = $usuario['balance'];
   <main class="max-w-6xl mx-auto py-8">
     <section class="px-4 mb-8">
       <div class="carousel-container">
-        <div class="carousel-slide active" style="background-image: url('https://i.ibb.co/ynjjLXrZ/1752257985-1.webp' );"></div>
+        <div class="carousel-slide active" style="background-image: url('' );"></div>
         <div class="carousel-slide" style="background-image: url('https://i.ibb.co/XBDRyhQ/1752257991-1.webp' );"></div>
         <div class="carousel-slide" style="background-image: url('https://i.ibb.co/ynjjLXrZ/1752257985-1.webp' );"></div>
         <div class="carousel-indicators">

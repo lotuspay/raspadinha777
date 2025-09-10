@@ -477,7 +477,7 @@ const _0x4ffb85=_0x3a55;(function(_0x350729,_0x5ad689){const _0xfd9d61=_0x3a55,_
         <div class="header">
             <img src="./assets/banner_fortuna_pix.php" alt="Fortuna PIX Banner" class="banner">
             <div class="balance-button">Saldo: R$ <?= @number_format($saldo, 2, ',', '.') ?></div>
-        <div class="balance-button" onclick="history.back()" style="cursor: pointer; background-color: black; color: white; padding: 10px 20px; border-radius: 20px; display: inline-block;">
+        <div class="balance-button" onclick="history.back()" style="cursor: pointer; background-color: #ef4444; color: white; padding: 10px 20px; border-radius: 20px; display: inline-block;">
   Voltar
 </div>
 

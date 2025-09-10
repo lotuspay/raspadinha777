@@ -1,0 +1,4 @@
+*.log
+stderr
+stdout
+debug_headers.txt
