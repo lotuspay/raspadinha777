@@ -109,9 +109,9 @@ if ($result->num_rows > 0) {
         echo "<tr>";
         echo "<td style='padding: 8px;'>{$row['id']}</td>";
         echo "<td style='padding: 8px;'>{$row['name']}</td>";
-        echo "<td style='padding: 8px;'>R$ " . number_format($row['valor_aposta'], 2, ',', '.') . "</td>";
+        echo "<td style='padding: 8px;'>R$ " . @number_format($row['valor_aposta'], 2, ',', '.') . "</td>";
         echo "<td style='padding: 8px;'>{$row['resultado']}</td>";
-        echo "<td style='padding: 8px;'>R$ " . number_format($row['premio'], 2, ',', '.') . "</td>";
+        echo "<td style='padding: 8px;'>R$ " . @number_format($row['premio'], 2, ',', '.') . "</td>";
         echo "<td style='padding: 8px;'>" . date('d/m/Y H:i:s', strtotime($row['data_jogada'])) . "</td>";
         echo "</tr>";
     }

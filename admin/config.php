@@ -4,7 +4,7 @@ ini_set("html_errors", 0);
 error_reporting(E_ALL);
 
 $host = 'localhost';
-$db = 'raspadinha';
+$db = 'raspadinha777';
 $user = 'root';
 $pass = '';
 

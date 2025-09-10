@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->execute()) {
                 $response['success'] = true;
                 $response['message'] = 'Saldo atualizado com sucesso!';
-                $response['new_balance'] = number_format($novoSaldo, 2, ',', '.');
+                $response['new_balance'] = @number_format($novoSaldo, 2, ',', '.');
             } else {
                 $response['message'] = 'Erro ao atualizar saldo.';
             }
@@ -827,7 +827,7 @@ $stats = $stats_result->fetch_assoc();
                         <i class="fas fa-wallet"></i>
                     </div>
                 </div>
-                <h3 class="stat-value" data-stat="total_balance">R$ <?php echo number_format($stats['total_balance'], 2, ',', '.'); ?></h3>
+                <h3 class="stat-value" data-stat="total_balance">R$ <?php echo @number_format($stats['total_balance'], 2, ',', '.'); ?></h3>
                 <p class="stat-label">Saldo Total</p>
             </div>
         </div>
@@ -857,7 +857,7 @@ $stats = $stats_result->fetch_assoc();
                                     <td><?php echo htmlspecialchars($user['id']); ?></td>
                                     <td><?php echo htmlspecialchars($user['name']); ?></td>
                                     <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                    <td>R$ <?php echo number_format($user['balance'], 2, ',', '.'); ?></td>
+                                    <td>R$ <?php echo @number_format($user['balance'], 2, ',', '.'); ?></td>
                                     <td class="user-type-cell">
                                         <?php if ($user['is_admin'] == 1): ?>
                                             <span class="admin-badge"><i class="fas fa-crown me-1"></i>Admin</span>
@@ -872,7 +872,7 @@ $stats = $stats_result->fetch_assoc();
                                             <span class="badge badge-affiliate-inactive">Não Afiliado</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td>R$ <?php echo number_format(isset($user['affiliate_balance']) ? $user['affiliate_balance'] : 0, 2, ',', '.'); ?></td>
+                                    <td>R$ <?php echo @number_format(isset($user['affiliate_balance']) ? $user['affiliate_balance'] : 0, 2, ',', '.'); ?></td>
                                 <td>
                                     <div class="action-buttons">
                                         <!-- Botão Editar Saldo -->

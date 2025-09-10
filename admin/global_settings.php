@@ -1304,7 +1304,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                     </div>
                     <div class="stat-change positive">+2</div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($stats['total_affiliates']); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($stats['total_affiliates']); ?></h3>
                 <p class="stat-label">Total de Afiliados</p>
                 <small class="text-white">Afiliados cadastrados no sistema</small>
             </div>
@@ -1317,7 +1317,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                     </div>
                     <div class="stat-change positive">+1</div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($stats['active_affiliates']); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($stats['active_affiliates']); ?></h3>
                 <p class="stat-label">Afiliados Ativos</p>
                 <small class="text-white">Afiliados com status ativo</small>
             </div>
@@ -1330,7 +1330,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                     </div>
                     <div class="stat-change positive">R$ 0,00</div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($stats['total_commissions'], 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($stats['total_commissions'], 2, ',', '.'); ?></h3>
                 <p class="stat-label">Total Comissões</p>
                 <small class="text-white">Comissões aprovadas pagas</small>
             </div>
@@ -1341,9 +1341,9 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                     <div class="stat-icon" style="background: var(--accent-purple);">
                         <i class="bi bi-arrow-up-circle"></i>
                     </div>
-                    <div class="stat-change positive"><?php echo number_format($stats['pending_payouts']); ?></div>
+                    <div class="stat-change positive"><?php echo @number_format($stats['pending_payouts']); ?></div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($stats['pending_payouts']); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($stats['pending_payouts']); ?></h3>
                 <p class="stat-label">Saques</p>
                 <small class="text-white">Saques pendentes de aprovação</small>
             </div>
@@ -1581,14 +1581,14 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                     </td>
                                     <td>
                                         <?php if ($user_row['min_deposit_amount']): ?>
-                                            <span class="text-success">R$ <?php echo number_format($user_row['min_deposit_amount'], 2, ',', '.'); ?></span>
+                                            <span class="text-success">R$ <?php echo @number_format($user_row['min_deposit_amount'], 2, ',', '.'); ?></span>
                                         <?php else: ?>
                                             <span class="text-white">Global</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
                                         <?php if ($user_row['min_withdrawal_amount']): ?>
-                                            <span class="text-success">R$ <?php echo number_format($user_row['min_withdrawal_amount'], 2, ',', '.'); ?></span>
+                                            <span class="text-success">R$ <?php echo @number_format($user_row['min_withdrawal_amount'], 2, ',', '.'); ?></span>
                                         <?php else: ?>
                                             <span class="text-white">Global</span>
                                         <?php endif; ?>
@@ -1703,7 +1703,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                             </td>
                                             <td class="d-none d-md-table-cell">
                                                 <?php echo $banner['width']; ?>x<?php echo $banner['height']; ?>px
-                                                <br><small class="text-muted"><?php echo number_format($banner['file_size']/1024, 1); ?> KB</small>
+                                                <br><small class="text-muted"><?php echo @number_format($banner['file_size']/1024, 1); ?> KB</small>
                                             </td>
                                             <td>
                                                 <?php if ($banner['is_active']): ?>
@@ -1786,7 +1786,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                    id="edit_min_deposit" step="0.01" min="0" 
                                    placeholder="Deixe em branco para usar valor global">
                             <div class="form-text">
-                                Valor global atual: R$ <?php echo number_format($settings['min_deposit_amount']['setting_value'], 2, ',', '.'); ?>
+                                Valor global atual: R$ <?php echo @number_format($settings['min_deposit_amount']['setting_value'], 2, ',', '.'); ?>
                             </div>
                         </div>
                         
@@ -1796,7 +1796,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                    id="edit_min_withdrawal" step="0.01" min="0" 
                                    placeholder="Deixe em branco para usar valor global">
                             <div class="form-text">
-                                Valor global atual: R$ <?php echo number_format($settings['min_payout_amount']['setting_value'], 2, ',', '.'); ?>
+                                Valor global atual: R$ <?php echo @number_format($settings['min_payout_amount']['setting_value'], 2, ',', '.'); ?>
                             </div>
                         </div>
                         

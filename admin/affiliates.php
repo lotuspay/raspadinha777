@@ -800,10 +800,10 @@ $affiliates_result = $stmt->get_result();
                         $total_commissions = 0;
                         $temp_result = $conn->query("SELECT COALESCE(SUM(amount), 0) as total FROM commissions");
                         $total_commissions = $temp_result->fetch_assoc()['total'];
-                        echo number_format($total_commissions, 2, ',', '.');
+                        echo @number_format($total_commissions, 2, ',', '.');
                     ?></div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($total_commissions, 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($total_commissions, 2, ',', '.'); ?></h3>
                 <p class="stat-label">Total Comissões</p>
                 <small class="text-white">Comissões pagas aos afiliados</small>
             </div>
@@ -884,12 +884,12 @@ $affiliates_result = $stmt->get_result();
                             </td>
                             <td class="d-none d-lg-table-cell">
                                 <small>
-                                    CPA: <strong>R$ <?php echo number_format($affiliate['total_cpa'], 2, ',', '.'); ?></strong><br>
-                                    RevShare: <strong>R$ <?php echo number_format($affiliate['total_revshare'], 2, ',', '.'); ?></strong>
+                                    CPA: <strong>R$ <?php echo @number_format($affiliate['total_cpa'], 2, ',', '.'); ?></strong><br>
+                                    RevShare: <strong>R$ <?php echo @number_format($affiliate['total_revshare'], 2, ',', '.'); ?></strong>
                                 </small>
                             </td>
                             <td>
-                                <strong class="text-success">R$ <?php echo number_format($affiliate['affiliate_balance'], 2, ',', '.'); ?></strong>
+                                <strong class="text-success">R$ <?php echo @number_format($affiliate['affiliate_balance'], 2, ',', '.'); ?></strong>
                             </td>
                             <td>
                                 <div class="action-buttons">

@@ -594,7 +594,7 @@ try {
                                 <i class="bi bi-trophy"></i>
                             </div>
                         </div>
-                        <h3 class="stat-value"><?= number_format($config['premios_pagos']) ?></h3>
+                        <h3 class="stat-value"><?= @number_format($config['premios_pagos']) ?></h3>
                         <p class="stat-label">Prêmios Pagos</p>
                         <small class="text-white">Total de prêmios distribuídos</small>
                     </div>
@@ -604,7 +604,7 @@ try {
                                 <i class="bi bi-currency-dollar"></i>
                             </div>
                         </div>
-                        <h3 class="stat-value valor-preview">R$ <?= number_format($config['valor_premio'], 2, ',', '.') ?></h3>
+                        <h3 class="stat-value valor-preview">R$ <?= @number_format($config['valor_premio'], 2, ',', '.') ?></h3>
                         <p class="stat-label">Valor do Prêmio</p>
                         <small class="text-white">Valor configurado por prêmio</small>
                     </div>
@@ -614,7 +614,7 @@ try {
                                 <i class="bi bi-hash"></i>
                             </div>
                         </div>
-                        <h3 class="stat-value"><?= number_format($config['max_premios']) ?></h3>
+                        <h3 class="stat-value"><?= @number_format($config['max_premios']) ?></h3>
                         <p class="stat-label">Máximo de Prêmios</p>
                         <small class="text-white">Limite configurado de prêmios</small>
                     </div>
@@ -646,7 +646,7 @@ try {
                                     <span class="input-group-text">R$</span>
                                     <input type="number" class="form-control" name="valor" id="valor" 
                                            step="0.01" min="0" max="999999.99" 
-                                           value="<?= number_format($config['valor_premio'], 2, '.', '') ?>" 
+                                           value="<?= @number_format($config['valor_premio'], 2, '.', '') ?>" 
                                            required aria-describedby="valor-help">
                                 </div>
                                 <div class="form-text" id="valor-help">Valor em reais que será pago como prêmio</div>
@@ -840,7 +840,7 @@ try {
             // Verificar se há alterações não salvas
             const originalValues = {
                 ativo: <?= $config['ativo'] ? 'true' : 'false' ?>,
-                valor: '<?= number_format($config['valor_premio'], 2, '.', '') ?>',
+                valor: '<?= @number_format($config['valor_premio'], 2, '.', '') ?>',
                 max: '<?= $config['max_premios'] ?>'
             };
 

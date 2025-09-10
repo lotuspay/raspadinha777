@@ -1037,7 +1037,7 @@ $saldo = $usuario['balance'];?>
       <!-- Desktop Buttons -->
       <div class="flex gap-3 items-center">
   <span class="bg-green-500 text-white px-3 py-1 rounded text-sm font-semibold">
-    R$ <?= number_format($saldo, 2, ',', '.') ?>
+    R$ <?= @number_format($saldo, 2, ',', '.') ?>
   </span>
   <button onclick="abrirDeposito()" class="bg-green-500 hover:bg-emerald-600 px-3 py-1 rounded text-sm font-semibold transition-all flex items-center gap-1">
   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1091,7 +1091,7 @@ $saldo = $usuario['balance'];?>
       <!-- Enhanced Mobile Auth Buttons -->
       <div class="mobile-auth-buttons">
         <div class="user-info">
-          <span class="saldo-display">R$ <?= number_format($saldo, 2, ',', '.') ?></span>
+          <span class="saldo-display">R$ <?= @number_format($saldo, 2, ',', '.') ?></span>
           <button onclick="window.location.href='../perfil'" class="depositar-btn">
   Sacar
 </button>

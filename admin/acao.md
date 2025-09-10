@@ -2875,10 +2875,10 @@ LIMIT $users_per_page OFFSET $offset
 ### 3. **Correção do Saldo de Afiliado:**
 ```php
 <!-- Antes -->
-<td>R$ <?php echo number_format($user['affiliate_balance'], 2, ',', '.'); ?></td>
+<td>R$ <?php echo @number_format($user['affiliate_balance'], 2, ',', '.'); ?></td>
 
 <!-- Depois -->
-<td>R$ <?php echo number_format(isset($user['affiliate_balance']) ? $user['affiliate_balance'] : 0, 2, ',', '.'); ?></td>
+<td>R$ <?php echo @number_format(isset($user['affiliate_balance']) ? $user['affiliate_balance'] : 0, 2, ',', '.'); ?></td>
 ```
 
 ## Melhorias Técnicas:
@@ -3412,7 +3412,7 @@ if (!$user || !$user['is_admin']) {
 
 ## Resultado:
 - Página `configuracoes_seguras.php` agora funciona corretamente
-- Usuários admin podem acessar as configurações do BSPay sem problemas
+- Usuários admin podem acessar as configurações do LotusPay sem problemas
 - Sistema de logs de segurança mantido funcional
 
 ---
@@ -5797,7 +5797,7 @@ Aplicar o mesmo estilo visual moderno da página `dashboard_dark.php` à página
             <i class="bi bi-list-ul"></i>
         </div>
     </div>
-    <h3 class="stat-value"><?php echo number_format($stats['total_requests']); ?></h3>
+    <h3 class="stat-value"><?php echo @number_format($stats['total_requests']); ?></h3>
     <p class="stat-label">Total de Solicitações</p>
 </div>
 ```
@@ -6445,13 +6445,13 @@ O usuário relatou que na página `global_settings.php` do diretório `c:\xampp\
 **Correções Aplicadas:**
 
 ### 1. Cards de Estatísticas - Dados Dinâmicos Restaurados
-- **Novos Cadastros:** Restaurado `<?php echo number_format($total_usuarios, 0, ',', '.'); ?>`
-- **Depósitos Pagos:** Restaurado `<?php echo number_format($total_depositos, 2, ',', '.'); ?>`
-- **Raspadinhas Jogadas:** Restaurado `<?php echo number_format($raspadinhas_hoje, 0, ',', '.'); ?>`
-- **Total de Depósitos Pendentes:** Restaurado `<?php echo number_format($depositos_pendentes, 2, ',', '.'); ?>`
-- **Depósitos - Saques:** Restaurado `<?php echo number_format($lucro_liquido, 2, ',', '.'); ?>`
-- **Total de Prêmios por Raspadinhas:** Restaurado `<?php echo number_format($receita_total, 2, ',', '.'); ?>`
-- **Valor Comprado - Prêmios:** Restaurado `<?php echo number_format($premios_pagos, 2, ',', '.'); ?>`
+- **Novos Cadastros:** Restaurado `<?php echo @number_format($total_usuarios, 0, ',', '.'); ?>`
+- **Depósitos Pagos:** Restaurado `<?php echo @number_format($total_depositos, 2, ',', '.'); ?>`
+- **Raspadinhas Jogadas:** Restaurado `<?php echo @number_format($raspadinhas_hoje, 0, ',', '.'); ?>`
+- **Total de Depósitos Pendentes:** Restaurado `<?php echo @number_format($depositos_pendentes, 2, ',', '.'); ?>`
+- **Depósitos - Saques:** Restaurado `<?php echo @number_format($lucro_liquido, 2, ',', '.'); ?>`
+- **Total de Prêmios por Raspadinhas:** Restaurado `<?php echo @number_format($receita_total, 2, ',', '.'); ?>`
+- **Valor Comprado - Prêmios:** Restaurado `<?php echo @number_format($premios_pagos, 2, ',', '.'); ?>`
 
 ### 2. Tabelas com Consultas Dinâmicas
 - **Últimos 5 Cadastros:** Restauradas consultas SQL para buscar dados reais dos usuários

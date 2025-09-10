@@ -558,7 +558,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
                         <i class="bi bi-dice-6"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($stats['total_jogadas'], 0, ',', '.') ?></h3>
+                <h3 class="stat-value"><?= @number_format($stats['total_jogadas'], 0, ',', '.') ?></h3>
                 <p class="stat-label">Total de Jogadas</p>
                 <small>Jogadas realizadas no sistema</small>
             </div>
@@ -570,7 +570,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
                         <i class="bi bi-currency-dollar"></i>
                     </div>
                 </div>
-                <h3 class="stat-value">R$ <?= number_format($stats['total_apostado'], 2, ',', '.') ?></h3>
+                <h3 class="stat-value">R$ <?= @number_format($stats['total_apostado'], 2, ',', '.') ?></h3>
                 <p class="stat-label">Total Apostado</p>
                 <small>Valor total das apostas</small>
             </div>
@@ -582,7 +582,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
                         <i class="bi bi-trophy"></i>
                     </div>
                 </div>
-                <h3 class="stat-value">R$ <?= number_format($stats['total_premios'], 2, ',', '.') ?></h3>
+                <h3 class="stat-value">R$ <?= @number_format($stats['total_premios'], 2, ',', '.') ?></h3>
                 <p class="stat-label">Total em Prêmios</p>
                 <small>Valor total dos prêmios pagos</small>
             </div>
@@ -594,7 +594,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
                         <i class="bi bi-bank"></i>
                     </div>
                 </div>
-                <h3 class="stat-value">R$ <?= number_format($lucro_casa, 2, ',', '.') ?></h3>
+                <h3 class="stat-value">R$ <?= @number_format($lucro_casa, 2, ',', '.') ?></h3>
                 <p class="stat-label">Lucro da Casa</p>
                 <small>Diferença entre apostas e prêmios</small>
             </div>
@@ -606,7 +606,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
                         <i class="bi bi-percent"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($taxa_vitoria, 1) ?>%</h3>
+                <h3 class="stat-value"><?= @number_format($taxa_vitoria, 1) ?>%</h3>
                 <p class="stat-label">Taxa de Vitória</p>
                 <small>Percentual de jogadas vencedoras</small>
             </div>
@@ -660,7 +660,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
                     <i class="fas fa-table"></i>
                     Lista de Jogadas
                 </h4>
-                <span class="badge bg-primary"><?= number_format($total_records, 0, ',', '.') ?> registros encontrados</span>
+                <span class="badge bg-primary"><?= @number_format($total_records, 0, ',', '.') ?> registros encontrados</span>
             </div>
             
             <div class="table-responsive">
@@ -695,7 +695,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
                                 <tr>
                                     <td><strong><?= htmlspecialchars($row['id']) ?></strong></td>
                                     <td><?= htmlspecialchars($row['name']) ?></td>
-                                    <td><span class="text-warning">R$ <?= number_format($row['valor_aposta'], 2, ',', '.') ?></span></td>
+                                    <td><span class="text-warning">R$ <?= @number_format($row['valor_aposta'], 2, ',', '.') ?></span></td>
                                     <td>
                                         <?php if ($row['resultado'] === 'ganhou'): ?>
                                             <span class="badge bg-success">
@@ -709,7 +709,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
                                             </span>
                                         <?php endif; ?>
                                     </td>
-                                    <td><span class="text-success">R$ <?= number_format($row['premio'], 2, ',', '.') ?></span></td>
+                                    <td><span class="text-success">R$ <?= @number_format($row['premio'], 2, ',', '.') ?></span></td>
                                     <td><small><?= date('d/m/Y H:i:s', strtotime($row['data_jogada'])) ?></small></td>
                                 </tr>
                             <?php endwhile; ?>
@@ -733,7 +733,7 @@ $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats
         <?php if ($total_pages > 1): ?>
             <div class="pagination-container">
                 <div class="pagination-info">
-                    Mostrando <?= ($offset + 1) ?> a <?= min($offset + $limit, $total_records) ?> de <?= number_format($total_records, 0, ',', '.') ?> registros
+                    Mostrando <?= ($offset + 1) ?> a <?= min($offset + $limit, $total_records) ?> de <?= @number_format($total_records, 0, ',', '.') ?> registros
                 </div>
                 
                 <nav aria-label="Navegação de páginas">

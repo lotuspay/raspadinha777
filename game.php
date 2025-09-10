@@ -220,7 +220,7 @@ $saldo = $usuario['balance'];
             <div class="text-center sm:text-right">
               <p class="text-sm text-gray-400 mb-1">Saldo Disponível</p>
               <p id="saldo" class="text-2xl sm:text-3xl font-bold text-green-400 animate-pulse-glow">
-                R$ <?= number_format($saldo, 2, ',', '.') ?>
+                R$ <?= @number_format($saldo, 2, ',', '.') ?>
               </p>
             </div>
           </div>

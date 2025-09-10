@@ -182,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['novo_cpf'])) {
                 <div class="bg-card rounded-2xl p-6 text-center">
                     <div class="balance-card text-white p-6 rounded-xl mb-4">
                         <p class="text-sm uppercase">Saldo Atual</p>
-                        <p class="text-3xl font-bold">R$ <?= number_format($usuario['balance'], 2, ',', '.') ?></p>
+                        <p class="text-3xl font-bold">R$ <?= @number_format($usuario['balance'], 2, ',', '.') ?></p>
                     </div>
                     <button id="openModalBtn" class="w-full btn-primary text-white font-bold py-3 px-6 rounded-lg">Sacar via Pix</button>
                 </div>
@@ -214,7 +214,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['novo_cpf'])) {
             <div class="p-6">
                 <div class="info-box p-4 rounded-lg mb-6">
                     <span class="font-semibold">Saldo Disponível:</span>
-                    <span class="font-bold text-lg">R$ <?= number_format($usuario['balance'], 2, ',', '.') ?></span>
+                    <span class="font-bold text-lg">R$ <?= @number_format($usuario['balance'], 2, ',', '.') ?></span>
                 </div>
                 <form id="formSaquePix" onsubmit="event.preventDefault(); processarSaque();" class="space-y-4">
                     <div>

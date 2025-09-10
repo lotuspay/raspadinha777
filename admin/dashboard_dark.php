@@ -412,7 +412,7 @@ for ($i = 14; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+5</div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($total_usuarios, 0, ',', '.'); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($total_usuarios, 0, ',', '.'); ?></h3>
                 <p class="stat-label">Novos Cadastros</p>
                 <small class="text-white">3 cadastros nos últimos 7 dias</small>
             </div>
@@ -425,7 +425,7 @@ for ($i = 14; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+R$ 50,00</div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($total_depositos, 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($total_depositos, 2, ',', '.'); ?></h3>
                 <p class="stat-label">Depósitos Pagos</p>
                 <small class="text-white">R$ 15,00 nos últimos 7 dias</small>
             </div>
@@ -451,7 +451,7 @@ for ($i = 14; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+10</div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($raspadinhas_hoje, 0, ',', '.'); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($raspadinhas_hoje, 0, ',', '.'); ?></h3>
                 <p class="stat-label">Raspadinhas Jogadas</p>
                 <small class="text-white">40 jogadas nos últimos 7 dias</small>
             </div>
@@ -464,7 +464,7 @@ for ($i = 14; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+R$ 420,00</div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($depositos_pendentes, 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($depositos_pendentes, 2, ',', '.'); ?></h3>
                 <p class="stat-label">Total de Depósitos Pendentes</p>
                 <small class="text-white">Total de depósitos pendentes</small>
             </div>
@@ -477,7 +477,7 @@ for ($i = 14; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+R$ 161,00</div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($lucro_liquido, 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($lucro_liquido, 2, ',', '.'); ?></h3>
                 <p class="stat-label">Depósitos - Saques</p>
                 <small class="text-white">Depósitos - Saques</small>
             </div>
@@ -490,7 +490,7 @@ for ($i = 14; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+R$ 36,00</div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($receita_total, 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($receita_total, 2, ',', '.'); ?></h3>
                 <p class="stat-label">Total de Prêmios por Raspadinhas</p>
                 <small class="text-white">Total de prêmios por raspadinhas</small>
             </div>
@@ -503,7 +503,7 @@ for ($i = 14; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+R$ 164,00</div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($premios_pagos, 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($premios_pagos, 2, ',', '.'); ?></h3>
                 <p class="stat-label">Valor Comprado - Prêmios</p>
                 <small class="text-white">Valor comprado - Prêmios</small>
             </div>
@@ -586,7 +586,7 @@ for ($i = 14; $i >= 0; $i--) {
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($row['name']) . "<br><small class='text-white'>Raspadinha de Ouro</small></td>";
                                 if ($row['ganhou']) {
-                                    echo "<td><span class='badge badge-success'>R$ " . number_format($row['valor_premio'], 2, ',', '.') . "</span></td>";
+                                    echo "<td><span class='badge badge-success'>R$ " . @number_format($row['valor_premio'], 2, ',', '.') . "</span></td>";
                                 } else {
                                     echo "<td><span class='badge badge-danger'>R$ 0,00</span></td>";
                                 }

@@ -1125,7 +1125,7 @@ try {
             <?php if ($usuarioLogado): ?>
                 <div class="flex gap-3 items-center">
                     <span class="bg-green-500 text-white px-3 py-1 rounded text-sm font-semibold">
-                        R$ <?= number_format($saldo, 2, ',', '.') ?>
+                        R$ <?= @number_format($saldo, 2, ',', '.') ?>
                     </span>
                     <button onclick="abrirDeposito()" class="bg-green-500 hover:bg-emerald-600 px-3 py-1 rounded text-sm font-semibold transition-all flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1166,7 +1166,7 @@ try {
             <!-- Mobile Auth Buttons -->
             <?php if ($usuarioLogado): ?>
                 <div class="mobile-user-info">
-                    <span class="mobile-saldo-display">R$ <?= number_format($saldo, 2, ',', '.') ?></span>
+                    <span class="mobile-saldo-display">R$ <?= @number_format($saldo, 2, ',', '.') ?></span>
                     <button onclick="window.location.href='perfil.php'" class="mobile-depositar-btn">
                         Sacar
                     </button>
@@ -1237,8 +1237,8 @@ try {
                                     <!-- Conteúdo opcional do banner personalizado -->
                                     <div class="banner-info" style="position: absolute; bottom: 20px; left: 20px; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
                                         <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 5px;"><?= $nomeRaspadinha ?></h3>
-                                        <p style="font-size: 1rem;">Prêmios até R$ <?= number_format($premioMaximo, 2, ',', '.') ?></p>
-                                        <p style="font-size: 0.9rem; opacity: 0.9;">A partir de R$ <?= number_format($valorAposta, 2, ',', '.') ?></p>
+                                        <p style="font-size: 1rem;">Prêmios até R$ <?= @number_format($premioMaximo, 2, ',', '.') ?></p>
+                                        <p style="font-size: 0.9rem; opacity: 0.9;">A partir de R$ <?= @number_format($valorAposta, 2, ',', '.') ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -1472,15 +1472,15 @@ try {
                     ?>
                     <div class="raspadinha-card">
                         <img src="<?= $imagem ?>" alt="<?= $nome ?>" class="w-full h-16 object-cover mt-3 sm:mt-3 mb-4 rounded-md" />
-                        <p class="prize-text">Prêmios até<br>R$ <?= number_format($premio, 2, ',', '.') ?> NO PIX</p>
+                        <p class="prize-text">Prêmios até<br>R$ <?= @number_format($premio, 2, ',', '.') ?> NO PIX</p>
                         
                         <?php if ($isCustomStyle): ?>
-                            <span class="price-badge" <?= $corBadge ?>>R$ <?= number_format($valor, 2, ',', '.') ?></span>
+                            <span class="price-badge" <?= $corBadge ?>>R$ <?= @number_format($valor, 2, ',', '.') ?></span>
                         <?php else: ?>
-                            <span class="price-badge <?= $corBadge ?>">R$ <?= number_format($valor, 2, ',', '.') ?></span>
+                            <span class="price-badge <?= $corBadge ?>">R$ <?= @number_format($valor, 2, ',', '.') ?></span>
                         <?php endif; ?>
                         
-                        <p class="game-description"><?= $descricao ?> <?= strpos($nome, 'Sonho') !== false ? '😍' : '' ?><br>Prêmio até: R$ <?= number_format($premio, 2, ',', '.') ?></p>
+                        <p class="game-description"><?= $descricao ?> <?= strpos($nome, 'Sonho') !== false ? '😍' : '' ?><br>Prêmio até: R$ <?= @number_format($premio, 2, ',', '.') ?></p>
                         
                         <?php if ($usuarioLogado): ?>
                             <a href="index.php?raspadinha=<?= urlencode($tipo['nome']) ?>" class="play-button">

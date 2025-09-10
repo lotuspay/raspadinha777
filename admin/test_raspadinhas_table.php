@@ -26,7 +26,7 @@ try {
             echo "<td>" . htmlspecialchars($row['name'] ?? 'N/A') . "</td>";
             echo "<td>" . htmlspecialchars($row['tipo_raspadinha'] ?? 'Raspadinha') . "</td>";
             echo "<td>" . htmlspecialchars($row['resultado']) . "</td>";
-            echo "<td>R$ " . number_format($row['premio'], 2, ',', '.') . "</td>";
+            echo "<td>R$ " . @number_format($row['premio'], 2, ',', '.') . "</td>";
             echo "<td>" . date('d/m/Y H:i:s', strtotime($row['data_jogada'])) . "</td>";
             echo "</tr>";
         }
@@ -48,7 +48,7 @@ try {
             echo "<tr>";
             echo "<td>" . htmlspecialchars($row['name'] ?? 'N/A') . "<br><small style='color: #888;'>" . htmlspecialchars($row['tipo_raspadinha'] ?? 'Raspadinha') . "</small></td>";
             if ($row['resultado'] === 'ganhou') {
-                echo "<td><span style='background: green; color: white; padding: 2px 8px; border-radius: 4px;'>R$ " . number_format($row['premio'], 2, ',', '.') . "</span></td>";
+                echo "<td><span style='background: green; color: white; padding: 2px 8px; border-radius: 4px;'>R$ " . @number_format($row['premio'], 2, ',', '.') . "</span></td>";
             } else {
                 echo "<td><span style='background: red; color: white; padding: 2px 8px; border-radius: 4px;'>R$ 0,00</span></td>";
             }

@@ -340,9 +340,9 @@ $tipos = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                                                     <br><small class="text-muted"><?php echo htmlspecialchars($tipo['descricao_curta']); ?></small>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>R$ <?php echo number_format($tipo['premio_maximo'], 2, ',', '.'); ?></td>
-                                            <td><?php echo number_format($tipo['chance_base'] * 100, 2, ',', '.'); ?>%</td>
-                                            <td>R$ <?php echo number_format($tipo['valor_aposta_padrao'], 2, ',', '.'); ?></td>
+                                            <td>R$ <?php echo @number_format($tipo['premio_maximo'], 2, ',', '.'); ?></td>
+                                            <td><?php echo @number_format($tipo['chance_base'] * 100, 2, ',', '.'); ?>%</td>
+                                            <td>R$ <?php echo @number_format($tipo['valor_aposta_padrao'], 2, ',', '.'); ?></td>
                                             <td>
                                 <?php if (!empty($tipo['banner_personalizado'])): ?>
                                     <span class="badge bg-info">Personalizado</span>

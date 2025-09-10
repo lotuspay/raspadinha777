@@ -4,8 +4,8 @@ error_reporting(E_ALL);
 
 $host = 'localhost';
 $db = 'raspadinha777';
-$user = 'raspadinha777';
-$pass = 'Nxf7xzdcEiGBFttA';
+$user = 'root';
+$pass = '';
 
 $conn = new mysqli($host, $user, $pass, $db);
 

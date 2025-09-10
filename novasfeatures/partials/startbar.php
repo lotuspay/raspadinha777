@@ -305,7 +305,7 @@
                                     <a class="nav-link" href="suitpay">Chaves SuitPay</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="pixup">Chaves BsPay / PixUp</a>
+                                    <a class="nav-link" href="pixup">Chaves LotusPay / PixUp</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="royalbenk">Chaves RoyalBenk</a>

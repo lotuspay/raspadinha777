@@ -35,9 +35,9 @@ if ($result->num_rows > 0) {
         echo "<tr>";
         echo "<td style='padding: 10px;'>" . htmlspecialchars($row['id']) . "</td>";
         echo "<td style='padding: 10px;'>" . htmlspecialchars($row['name']) . "</td>";
-        echo "<td style='padding: 10px;'>R$ " . number_format($row['valor_aposta'], 2, ',', '.') . "</td>";
+        echo "<td style='padding: 10px;'>R$ " . @number_format($row['valor_aposta'], 2, ',', '.') . "</td>";
         echo "<td style='padding: 10px;'>" . htmlspecialchars($row['resultado']) . "</td>";
-        echo "<td style='padding: 10px;'>R$ " . number_format($row['premio'], 2, ',', '.') . "</td>";
+        echo "<td style='padding: 10px;'>R$ " . @number_format($row['premio'], 2, ',', '.') . "</td>";
         echo "<td style='padding: 10px;'>" . date('d/m/Y H:i:s', strtotime($row['data_jogada'])) . "</td>";
         echo "</tr>";
     }

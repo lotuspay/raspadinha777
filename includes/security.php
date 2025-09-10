@@ -1,6 +1,6 @@
 <?php
 /**
- * Classe de Segurança para o Sistema BSPay
+ * Classe de Segurança para o Sistema LotusPay
  */
 class Security {
     

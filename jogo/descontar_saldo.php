@@ -83,7 +83,7 @@ try {
     echo json_encode([
         "sucesso" => true,
         "valor_apostado" => $valorAposta,
-        "saldo" => number_format($user["balance"], 2, ",", "."),
+        "saldo" => @number_format($user["balance"], 2, ",", "."),
         "saldo_numerico" => $user["balance"]
     ]);
     

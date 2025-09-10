@@ -420,7 +420,7 @@ $stats = $stats_result->fetch_assoc();
                         <i class="fas fa-coins"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($stats['total_deposits']) ?></h3>
+                <h3 class="stat-value"><?= @number_format($stats['total_deposits']) ?></h3>
                 <p class="stat-label">Total de Depósitos</p>
             </div>
 
@@ -430,7 +430,7 @@ $stats = $stats_result->fetch_assoc();
                         <i class="fas fa-clock"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($stats['pending_count']) ?></h3>
+                <h3 class="stat-value"><?= @number_format($stats['pending_count']) ?></h3>
                 <p class="stat-label">Pendentes</p>
             </div>
 
@@ -440,7 +440,7 @@ $stats = $stats_result->fetch_assoc();
                         <i class="fas fa-check"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($stats['approved_count']) ?></h3>
+                <h3 class="stat-value"><?= @number_format($stats['approved_count']) ?></h3>
                 <p class="stat-label">Aprovados</p>
             </div>
 
@@ -450,7 +450,7 @@ $stats = $stats_result->fetch_assoc();
                         <i class="fas fa-dollar-sign"></i>
                     </div>
                 </div>
-                <h3 class="stat-value">R$ <?= number_format($stats['total_approved_amount'], 2, ',', '.') ?></h3>
+                <h3 class="stat-value">R$ <?= @number_format($stats['total_approved_amount'], 2, ',', '.') ?></h3>
                 <p class="stat-label">Valor Total Aprovado</p>
             </div>
         </div>
@@ -486,7 +486,7 @@ $stats = $stats_result->fetch_assoc();
                             <tr>
                                 <td><?= htmlspecialchars($deposit['id']) ?></td>
                                 <td><?= htmlspecialchars($deposit['usuario_nome'] ?? 'Usuário não encontrado') ?></td>
-                                <td>R$ <?= number_format($deposit['amount'], 2, ',', '.') ?></td>
+                                <td>R$ <?= @number_format($deposit['amount'], 2, ',', '.') ?></td>
                                 <td>
                                     <?php 
                                     $status = strtolower($deposit['status']);

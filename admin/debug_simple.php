@@ -61,7 +61,7 @@ if ($result->num_rows > 0) {
         echo "<td>" . $user['id'] . "</td>";
         echo "<td>" . htmlspecialchars($user['name']) . "</td>";
         echo "<td>" . htmlspecialchars($user['email']) . "</td>";
-        echo "<td>R$ " . number_format($user['balance'], 2, ',', '.') . "</td>";
+        echo "<td>R$ " . @number_format($user['balance'], 2, ',', '.') . "</td>";
         echo "<td>" . ($user['is_admin'] ? 'Sim' : 'Não') . "</td>";
         echo "</tr>";
     }

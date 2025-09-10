@@ -461,25 +461,25 @@ $affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/index.php?ref=" . $affil
         <div class="row fade-in">
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="stat-value"><?php echo number_format($stats['clicks']); ?></div>
+                    <div class="stat-value"><?php echo @number_format($stats['clicks']); ?></div>
                     <div class="stat-label">Cliques</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="stat-value"><?php echo number_format($stats['signups']); ?></div>
+                    <div class="stat-value"><?php echo @number_format($stats['signups']); ?></div>
                     <div class="stat-label">Cadastros</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="stat-value"><?php echo number_format($stats['deposits']); ?></div>
+                    <div class="stat-value"><?php echo @number_format($stats['deposits']); ?></div>
                     <div class="stat-label">Depósitos</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card">
-                    <div class="stat-value">R$ <?php echo number_format($stats['balance'], 2, ',', '.'); ?></div>
+                    <div class="stat-value">R$ <?php echo @number_format($stats['balance'], 2, ',', '.'); ?></div>
                     <div class="stat-label">Saldo Disponível</div>
                 </div>
             </div>
@@ -494,11 +494,11 @@ $affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/index.php?ref=" . $affil
                     </h5>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="h4 mb-0">R$ <?php echo number_format($stats["revshare_commission"], 2, ",", "."); ?></div>
+                            <div class="h4 mb-0">R$ <?php echo @number_format($stats["revshare_commission"], 2, ",", "."); ?></div>
                             <small>Por depósitos realizados</small>
                         </div>
                         <div class="text-end">
-                            <div class="h6 mb-0"><?php echo number_format($affiliate_info["revshare_commission_rate"], 1); ?>%</div>
+                            <div class="h6 mb-0"><?php echo @number_format($affiliate_info["revshare_commission_rate"], 1); ?>%</div>
                             <small>Taxa atual</small>
                         </div>
                     </div>
@@ -527,7 +527,7 @@ $affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/index.php?ref=" . $affil
                 <div class="col-md-4">
                     <div class="text-center">
                         <h5>Total de Comissões</h5>
-                        <div class="h2 text-success">R$ <?php echo number_format($stats["revshare_commission"], 2, ",", "."); ?></div>
+                        <div class="h2 text-success">R$ <?php echo @number_format($stats["revshare_commission"], 2, ",", "."); ?></div>
                     </div>
                 </div>
             </div>
@@ -593,7 +593,7 @@ $affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/index.php?ref=" . $affil
                                 <td>
                                     <span class="level-indicator"><?php echo $commission['level']; ?></span>
                                 </td>
-                                <td class="text-success">R$ <?php echo number_format($commission['amount'], 2, ',', '.'); ?></td>
+                                <td class="text-success">R$ <?php echo @number_format($commission['amount'], 2, ',', '.'); ?></td>
                                 <td>
                                     <span class="badge <?php 
                                         echo $commission['status'] == 'approved' ? 'bg-success' : 
@@ -639,7 +639,7 @@ $affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/index.php?ref=" . $affil
                             <?php while ($payout = $payouts_history->fetch_assoc()): ?>
                             <tr>
                                 <td><?php echo date('d/m/Y H:i', strtotime($payout['request_date'])); ?></td>
-                                <td class="text-success">R$ <?php echo number_format($payout['amount'], 2, ',', '.'); ?></td>
+                                <td class="text-success">R$ <?php echo @number_format($payout['amount'], 2, ',', '.'); ?></td>
                                 <td>
                                     <span class="badge <?php 
                                         echo $payout['status'] == 'paid' ? 'bg-success' : 
@@ -722,7 +722,7 @@ $affiliate_link = "http://" . $_SERVER['HTTP_HOST'] . "/index.php?ref=" . $affil
                         
                         <div class="mb-3">
                             <label class="form-label text-white">Saldo Disponível</label>
-                            <div class="h4 text-success">R$ <?php echo number_format($stats['balance'], 2, ',', '.'); ?></div>
+                            <div class="h4 text-success">R$ <?php echo @number_format($stats['balance'], 2, ',', '.'); ?></div>
                         </div>
                         
                         <div class="mb-3">

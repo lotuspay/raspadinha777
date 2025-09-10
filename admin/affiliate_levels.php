@@ -598,7 +598,7 @@ for ($i = 29; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+12</div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($total_referrals); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($total_referrals); ?></h3>
                 <p class="stat-label">Total de Indicações</p>
                 <small class="text-white">5 indicações nos últimos 7 dias</small>
             </div>
@@ -611,7 +611,7 @@ for ($i = 29; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+R$ 25,50</div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($total_commissions, 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($total_commissions, 2, ',', '.'); ?></h3>
                 <p class="stat-label">Total de Comissões</p>
                 <small class="text-white">R$ 45,00 nos últimos 7 dias</small>
             </div>
@@ -637,7 +637,7 @@ for ($i = 29; $i >= 0; $i--) {
                     </div>
                     <div class="stat-change positive">+3</div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($total_affiliates); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($total_affiliates); ?></h3>
                 <p class="stat-label">Total de Afiliados</p>
                 <small class="text-white">2 novos afiliados esta semana</small>
             </div>
@@ -705,10 +705,10 @@ for ($i = 29; $i >= 0; $i--) {
                             }
                             ?>
                         </td>
-                        <td><?php echo number_format($level['total_referrals']); ?></td>
-                        <td><?php echo number_format($level['unique_referrers']); ?></td>
-                        <td>R$ <?php echo number_format($level['total_commissions'], 2, ',', '.'); ?></td>
-                        <td>R$ <?php echo number_format($avg_commission, 2, ',', '.'); ?></td>
+                        <td><?php echo @number_format($level['total_referrals']); ?></td>
+                        <td><?php echo @number_format($level['unique_referrers']); ?></td>
+                        <td>R$ <?php echo @number_format($level['total_commissions'], 2, ',', '.'); ?></td>
+                        <td>R$ <?php echo @number_format($avg_commission, 2, ',', '.'); ?></td>
                     </tr>
                     <?php 
                         endwhile; 

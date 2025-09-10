@@ -22,5 +22,5 @@ $user = $result->fetch_assoc();
 
 echo json_encode([
     'deposito_pago' => ($deposit && $deposit['status'] === 'pago'),
-    'novo_saldo' => number_format($user['balance'], 2, ',', '.')
+    'novo_saldo' => @number_format($user['balance'], 2, ',', '.')
 ]);

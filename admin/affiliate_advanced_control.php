@@ -405,7 +405,7 @@ $affiliates_result = $conn->query($affiliates_query);
             <div class="nav-item">
                 <a href="configuracoes.php" class="nav-link">
                     <i class="bi bi-credit-card"></i>
-                    BSPay & Imagens
+                    LotusPay & Imagens
                 </a>
             </div>
             <div class="nav-item">

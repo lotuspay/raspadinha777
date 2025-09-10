@@ -74,7 +74,7 @@ try {
         $results[] = [
             'type' => 'transaction',
             'title' => 'Depósito #' . $deposit['id'],
-            'description' => 'R$ ' . number_format($deposit['valor'], 2, ',', '.') . ' - ' . $deposit['user_name'] . ' (' . ucfirst($deposit['status']) . ')',
+            'description' => 'R$ ' . @number_format($deposit['valor'], 2, ',', '.') . ' - ' . $deposit['user_name'] . ' (' . ucfirst($deposit['status']) . ')',
             'url' => 'depositos.php?id=' . $deposit['id'],
             'icon' => 'bi-arrow-down-circle'
         ];
@@ -97,7 +97,7 @@ try {
         $results[] = [
             'type' => 'withdrawal',
             'title' => 'Saque #' . $withdrawal['id'],
-            'description' => 'R$ ' . number_format($withdrawal['valor'], 2, ',', '.') . ' - ' . $withdrawal['user_name'] . ' (' . ucfirst($withdrawal['status']) . ')',
+            'description' => 'R$ ' . @number_format($withdrawal['valor'], 2, ',', '.') . ' - ' . $withdrawal['user_name'] . ' (' . ucfirst($withdrawal['status']) . ')',
             'url' => 'saques_pix.php?id=' . $withdrawal['id'],
             'icon' => 'bi-arrow-up-circle'
         ];

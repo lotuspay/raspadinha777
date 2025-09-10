@@ -4,20 +4,20 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Função para log de debug
-function logBSPay($message, $data = null) {
+function logLotusPay($message, $data = null) {
     $timestamp = date('Y-m-d H:i:s');
     $logMessage = "[$timestamp] $message";
     if ($data) {
         $logMessage .= " - Data: " . json_encode($data, JSON_PRETTY_PRINT);
     }
     $logMessage .= "\n";
-    file_put_contents('logs/bspay_debug.log', $logMessage, FILE_APPEND | LOCK_EX);
+    file_put_contents('logs/lotuspay_debug.log', $logMessage, FILE_APPEND | LOCK_EX);
 }
 
-class BSPayAPI {
+class LotusPayAPI {
     private $client_id;
     private $client_secret;
-    private $base_url = "https://api.bspay.co/v2";
+    private $base_url = "https://api.lotuspay.co/v2";
     private $token = null;
     private $token_expires = null;
 
@@ -27,7 +27,7 @@ class BSPayAPI {
     }
 
     /**
-     * Obtém o token de acesso da API BSPay
+     * Obtém o token de acesso da API LotusPay
      */
     public function obterToken() {
         // Verifica se o token ainda é válido
@@ -53,7 +53,7 @@ class BSPayAPI {
         $error = curl_error($ch);
 
         // Log da requisição de token
-        logBSPay("Token Request", [
+        logLotusPay("Token Request", [
             'url' => $this->base_url . "/oauth/token",
             'http_code' => $httpCode,
             'curl_error' => $error,
@@ -118,7 +118,7 @@ class BSPayAPI {
         $error = curl_error($ch);
 
         // Log da requisição de QR Code
-        logBSPay("QR Code Request", [
+        logLotusPay("QR Code Request", [
             'url' => $this->base_url . "/pix/qrcode",
             'payload' => $payload,
             'http_code' => $httpCode,

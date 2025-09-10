@@ -377,7 +377,7 @@ $saldo = $usuario['balance'];
       
       <div class="hidden md:flex items-center gap-4">
         <span class="bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">
-          R$ <?= htmlspecialchars(number_format($saldo, 2, ',', '.')) ?>
+          R$ <?= htmlspecialchars(@number_format($saldo, 2, ',', '.')) ?>
         </span>
         <button onclick="abrirDeposito()" class="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
           <i class="fas fa-dollar-sign"></i> Depositar
@@ -392,7 +392,7 @@ $saldo = $usuario['balance'];
 
       <div class="md:hidden flex items-center gap-2">
         <span class="bg-green-700 text-white px-3 py-1.5 rounded-md text-xs font-semibold">
-          R$ <?= htmlspecialchars(number_format($saldo, 2, ',', '.')) ?>
+          R$ <?= htmlspecialchars(@number_format($saldo, 2, ',', '.')) ?>
         </span>
         <button onclick="abrirDeposito()" class="bg-yellow-500 text-black px-3 py-1.5 rounded-md text-xs font-bold">
           Depositar

@@ -35,7 +35,7 @@ while($row = $result->fetch_assoc()) {
     echo "<td>" . $row['id'] . "</td>";
     echo "<td>" . htmlspecialchars($row['name']) . "</td>";
     echo "<td>" . htmlspecialchars($row['email']) . "</td>";
-    echo "<td>R$ " . number_format($row['balance'], 2, ',', '.') . "</td>";
+    echo "<td>R$ " . @number_format($row['balance'], 2, ',', '.') . "</td>";
     echo "<td>" . ($row['is_admin'] ? 'Sim' : 'Não') . "</td>";
     echo "</tr>";
 }
@@ -52,8 +52,8 @@ $stats = $conn->query("SELECT
 echo "<ul>";
 echo "<li>Total de usuários: " . $stats['total_users'] . "</li>";
 echo "<li>Total de admins: " . $stats['total_admins'] . "</li>";
-echo "<li>Saldo total: R$ " . number_format($stats['total_balance'], 2, ',', '.') . "</li>";
-echo "<li>Saldo médio: R$ " . number_format($stats['avg_balance'], 2, ',', '.') . "</li>";
+echo "<li>Saldo total: R$ " . @number_format($stats['total_balance'], 2, ',', '.') . "</li>";
+echo "<li>Saldo médio: R$ " . @number_format($stats['avg_balance'], 2, ',', '.') . "</li>";
 echo "</ul>";
 
 echo "<h3>5. Teste de Sessão:</h3>";

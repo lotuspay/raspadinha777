@@ -509,19 +509,19 @@ CREATE TABLE `configuracoes` (
 
 INSERT INTO `configuracoes` (`id`, `chave`, `valor`) VALUES
 (1,	'rtp',	'5'),
-(2,	'bspay_client_id',	'mattheusedwardo@agenciakg.com.br'),
-(3,	'bspay_client_secret',	'aeL7SABBk3Iy54DT7BQvOT6zap'),
-(4,	'bspay_webhook_url',	'https://raspada777.com/webhook_bspay_novo.php'),
+(2,	'lotuspay_client_id',	'mattheusedwardo@agenciakg.com.br'),
+(3,	'lotuspay_client_secret',	'aeL7SABBk3Iy54DT7BQvOT6zap'),
+(4,	'lotuspay_webhook_url',	'https://raspada777.com/webhook_lotuspay_novo.php'),
 (20,	'chance_vitoria',	'1'),
-(26,	'bspay_base_url',	'https://api.xgateglobal.com'),
-(223,	'bspay_token_path',	'/auth/token'),
-(224,	'bspay_deposit_path',	'/deposit'),
-(225,	'bspay_tx_status_path',	'/deposit/status'),
-(226,	'bspay_deposit_company_currencies_path',	'/deposit/company/currencies'),
-(227,	'bspay_withdraw_path',	'/withdraw'),
-(228,	'bspay_withdraw_company_currencies_path',	'/withdraw/company/currencies'),
-(229,	'bspay_pix_keys_by_customer_path',	'/pix/customer/{customerId}/key'),
-(230,	'bspay_balance_path',	'/balance');
+(26,	'lotuspay_base_url',	'https://api.xgateglobal.com'),
+(223,	'lotuspay_token_path',	'/auth/token'),
+(224,	'lotuspay_deposit_path',	'/deposit'),
+(225,	'lotuspay_tx_status_path',	'/deposit/status'),
+(226,	'lotuspay_deposit_company_currencies_path',	'/deposit/company/currencies'),
+(227,	'lotuspay_withdraw_path',	'/withdraw'),
+(228,	'lotuspay_withdraw_company_currencies_path',	'/withdraw/company/currencies'),
+(229,	'lotuspay_pix_keys_by_customer_path',	'/pix/customer/{customerId}/key'),
+(230,	'lotuspay_balance_path',	'/balance');
 
 DROP TABLE IF EXISTS `custom_prizes`;
 CREATE TABLE `custom_prizes` (

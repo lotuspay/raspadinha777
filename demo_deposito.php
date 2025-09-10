@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $valor > 0) {
                 <h3>🎯 QR Code PIX Gerado com Sucesso!</h3>
                 
                 <div class="pix-info">
-                    <p><strong>💰 Valor:</strong> R$ <?= number_format($qr_code_data['valor'], 2, ',', '.') ?></p>
+                    <p><strong>💰 Valor:</strong> R$ <?= @number_format($qr_code_data['valor'], 2, ',', '.') ?></p>
                     <p><strong>🔢 ID da Transação:</strong> <?= htmlspecialchars($qr_code_data['external_id']) ?></p>
                 </div>
                 
@@ -331,7 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $valor > 0) {
         
         function sharePixCode() {
             const pixCode = document.getElementById('pixCode').textContent;
-            const valor = '<?= isset($qr_code_data) ? number_format($qr_code_data['valor'], 2, ',', '.') : '' ?>';
+            const valor = '<?= isset($qr_code_data) ? @number_format($qr_code_data['valor'], 2, ',', '.') : '' ?>';
             const shareText = `💳 Código PIX para pagamento de R$ ${valor}\n\n${pixCode}\n\n🔒 Pagamento seguro via PIX`;
             
             if (navigator.share) {

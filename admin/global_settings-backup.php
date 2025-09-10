@@ -851,25 +851,25 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                             <div class="row text-center">
                                 <div class="col-6 mb-3">
                                     <div class="stats-card">
-                                        <div class="stats-number text-primary"><?php echo number_format($stats['total_affiliates']); ?></div>
+                                        <div class="stats-number text-primary"><?php echo @number_format($stats['total_affiliates']); ?></div>
                                         <div class="stats-label">Total de Afiliados</div>
                                     </div>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <div class="stats-card">
-                                        <div class="stats-number text-success"><?php echo number_format($stats['active_affiliates']); ?></div>
+                                        <div class="stats-number text-success"><?php echo @number_format($stats['active_affiliates']); ?></div>
                                         <div class="stats-label">Afiliados Ativos</div>
                                     </div>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <div class="stats-card">
-                                        <div class="stats-number text-warning">R$ <?php echo number_format($stats['total_commissions'], 2, ',', '.'); ?></div>
+                                        <div class="stats-number text-warning">R$ <?php echo @number_format($stats['total_commissions'], 2, ',', '.'); ?></div>
                                         <div class="stats-label">Total Comissões</div>
                                     </div>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <div class="stats-card">
-                                        <div class="stats-number text-info"><?php echo number_format($stats['pending_payouts']); ?></div>
+                                        <div class="stats-number text-info"><?php echo @number_format($stats['pending_payouts']); ?></div>
                                         <div class="stats-label">Saques Pendentes</div>
                                     </div>
                                 </div>
@@ -914,14 +914,14 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                     <td class="d-none d-md-table-cell"><?php echo htmlspecialchars($user_row['email']); ?></td>
                                     <td>
                                         <?php if ($user_row['min_deposit_amount']): ?>
-                                            R$ <?php echo number_format($user_row['min_deposit_amount'], 2, ',', '.'); ?>
+                                            R$ <?php echo @number_format($user_row['min_deposit_amount'], 2, ',', '.'); ?>
                                         <?php else: ?>
                                             <span class="text-muted">Global</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
                                         <?php if ($user_row['min_withdrawal_amount']): ?>
-                                            R$ <?php echo number_format($user_row['min_withdrawal_amount'], 2, ',', '.'); ?>
+                                            R$ <?php echo @number_format($user_row['min_withdrawal_amount'], 2, ',', '.'); ?>
                                         <?php else: ?>
                                             <span class="text-muted">Global</span>
                                         <?php endif; ?>
@@ -990,11 +990,11 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                             <span class="badge bg-danger">Inativo</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td class="text-center"><?php echo number_format($affiliate['total_referrals']); ?></td>
-                                    <td class="text-center"><?php echo number_format($affiliate['approved_commissions']); ?></td>
-                                    <td class="text-success">R$ <?php echo number_format($affiliate['total_earnings'], 2, ',', '.'); ?></td>
-                                    <td class="text-info">R$ <?php echo number_format($affiliate['total_paid'], 2, ',', '.'); ?></td>
-                                    <td class="text-warning">R$ <?php echo number_format($affiliate['pending_balance'], 2, ',', '.'); ?></td>
+                                    <td class="text-center"><?php echo @number_format($affiliate['total_referrals']); ?></td>
+                                    <td class="text-center"><?php echo @number_format($affiliate['approved_commissions']); ?></td>
+                                    <td class="text-success">R$ <?php echo @number_format($affiliate['total_earnings'], 2, ',', '.'); ?></td>
+                                    <td class="text-info">R$ <?php echo @number_format($affiliate['total_paid'], 2, ',', '.'); ?></td>
+                                    <td class="text-warning">R$ <?php echo @number_format($affiliate['pending_balance'], 2, ',', '.'); ?></td>
                                     <td class="d-none d-xl-table-cell"><?php echo date('d/m/Y', strtotime($affiliate['created_at'])); ?></td>
                                 </tr>
                                 <?php endwhile; ?>
@@ -1043,7 +1043,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                             </td>
                                             <td class="d-none d-md-table-cell">
                                                 <?php echo $banner['width']; ?>x<?php echo $banner['height']; ?>px
-                                                <br><small class="text-muted"><?php echo number_format($banner['file_size']/1024, 1); ?> KB</small>
+                                                <br><small class="text-muted"><?php echo @number_format($banner['file_size']/1024, 1); ?> KB</small>
                                             </td>
                                             <td>
                                                 <?php if ($banner['is_active']): ?>
@@ -1176,7 +1176,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                    id="edit_min_deposit" step="0.01" min="0" 
                                    placeholder="Deixe em branco para usar valor global">
                             <div class="form-text">
-                                Valor global atual: R$ <?php echo number_format($settings['min_deposit_amount']['setting_value'], 2, ',', '.'); ?>
+                                Valor global atual: R$ <?php echo @number_format($settings['min_deposit_amount']['setting_value'], 2, ',', '.'); ?>
                             </div>
                         </div>
                         
@@ -1186,7 +1186,7 @@ $banners_result = $conn->query("SELECT * FROM banners ORDER BY position, sort_or
                                    id="edit_min_withdrawal" step="0.01" min="0" 
                                    placeholder="Deixe em branco para usar valor global">
                             <div class="form-text">
-                                Valor global atual: R$ <?php echo number_format($settings['min_payout_amount']['setting_value'], 2, ',', '.'); ?>
+                                Valor global atual: R$ <?php echo @number_format($settings['min_payout_amount']['setting_value'], 2, ',', '.'); ?>
                             </div>
                         </div>
                         

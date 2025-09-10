@@ -690,7 +690,7 @@ $payouts_result = $conn->query($payouts_query);
                         <i class="bi bi-list-ul"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($stats['total_requests']); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($stats['total_requests']); ?></h3>
                 <p class="stat-label">Total de Solicitações</p>
             </div>
 
@@ -701,7 +701,7 @@ $payouts_result = $conn->query($payouts_query);
                         <i class="bi bi-clock"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($stats['pending_requests']); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($stats['pending_requests']); ?></h3>
                 <p class="stat-label">Pendentes</p>
             </div>
 
@@ -712,7 +712,7 @@ $payouts_result = $conn->query($payouts_query);
                         <i class="bi bi-check-circle"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?php echo number_format($stats['paid_requests']); ?></h3>
+                <h3 class="stat-value"><?php echo @number_format($stats['paid_requests']); ?></h3>
                 <p class="stat-label">Pagos</p>
             </div>
 
@@ -723,7 +723,7 @@ $payouts_result = $conn->query($payouts_query);
                         <i class="bi bi-currency-dollar"></i>
                     </div>
                 </div>
-                <h3 class="stat-value">R$ <?php echo number_format($stats['pending_amount'], 2, ',', '.'); ?></h3>
+                <h3 class="stat-value">R$ <?php echo @number_format($stats['pending_amount'], 2, ',', '.'); ?></h3>
                 <p class="stat-label">Valor Pendente</p>
             </div>
         </div>
@@ -840,7 +840,7 @@ $payouts_result = $conn->query($payouts_query);
                                 <code><?php echo htmlspecialchars($payout['affiliate_code']); ?></code>
                             </td>
                             <td>
-                                <strong class="text-success">R$ <?php echo number_format($payout['amount'], 2, ',', '.'); ?></strong>
+                                <strong class="text-success">R$ <?php echo @number_format($payout['amount'], 2, ',', '.'); ?></strong>
                             </td>
                             <td class="d-none d-lg-table-cell">
                                 <?php echo date('d/m/Y H:i', strtotime($payout['request_date'])); ?>

@@ -554,7 +554,7 @@ $stats = $conn->query($stats_query)->fetch_assoc();
                 <div class="stat-icon total">
                     <i class="bi bi-people"></i>
                 </div>
-                <div class="stat-value"><?php echo number_format($stats['total_influencers']); ?></div>
+                <div class="stat-value"><?php echo @number_format($stats['total_influencers']); ?></div>
                 <div class="stat-label">Total de Influenciadores</div>
             </div>
             
@@ -562,7 +562,7 @@ $stats = $conn->query($stats_query)->fetch_assoc();
                 <div class="stat-icon active">
                     <i class="bi bi-check-circle"></i>
                 </div>
-                <div class="stat-value"><?php echo number_format($stats['active_influencers']); ?></div>
+                <div class="stat-value"><?php echo @number_format($stats['active_influencers']); ?></div>
                 <div class="stat-label">Influenciadores Ativos</div>
             </div>
             
@@ -570,7 +570,7 @@ $stats = $conn->query($stats_query)->fetch_assoc();
                 <div class="stat-icon rtp">
                     <i class="bi bi-percent"></i>
                 </div>
-                <div class="stat-value"><?php echo number_format($stats['avg_rtp'] ?? 0, 1); ?>%</div>
+                <div class="stat-value"><?php echo @number_format($stats['avg_rtp'] ?? 0, 1); ?>%</div>
                 <div class="stat-label">RTP Médio</div>
             </div>
             
@@ -578,7 +578,7 @@ $stats = $conn->query($stats_query)->fetch_assoc();
                 <div class="stat-icon wins">
                     <i class="bi bi-trophy"></i>
                 </div>
-                <div class="stat-value"><?php echo number_format($stats['total_wins'] ?? 0); ?></div>
+                <div class="stat-value"><?php echo @number_format($stats['total_wins'] ?? 0); ?></div>
                 <div class="stat-label">Total de Vitórias</div>
             </div>
             
@@ -586,7 +586,7 @@ $stats = $conn->query($stats_query)->fetch_assoc();
                 <div class="stat-icon prize">
                     <i class="bi bi-currency-dollar"></i>
                 </div>
-                <div class="stat-value">R$ <?php echo number_format($stats['avg_prize'] ?? 0, 2, ',', '.'); ?></div>
+                <div class="stat-value">R$ <?php echo @number_format($stats['avg_prize'] ?? 0, 2, ',', '.'); ?></div>
                 <div class="stat-label">Prêmio Médio</div>
             </div>
         </div>
@@ -642,21 +642,21 @@ $stats = $conn->query($stats_query)->fetch_assoc();
                                     elseif ($rtp >= 5) $color = 'var(--accent-orange)';
                                     ?>
                                     <span class="badge badge-custom" style="background: <?php echo $color; ?>; color: white;">
-                                        <?php echo number_format($influencer['win_percentage'], 2); ?>%
+                                        <?php echo @number_format($influencer['win_percentage'], 2); ?>%
                                     </span>
                                 </td>
                                 <td>
-                                    <strong style="color: var(--accent-green);">R$ <?php echo number_format($influencer['prize_value'], 2, ',', '.'); ?></strong>
+                                    <strong style="color: var(--accent-green);">R$ <?php echo @number_format($influencer['prize_value'], 2, ',', '.'); ?></strong>
                                 </td>
                                 <td>
                                     <span class="badge badge-custom" style="background: var(--accent-purple); color: white;">
-                                        <?php echo number_format($influencer['current_wins']); ?>
+                                        <?php echo @number_format($influencer['current_wins']); ?>
                                     </span>
                                 </td>
                                 <td>
                                     <?php if ($influencer['max_wins']): ?>
                                         <span class="badge badge-custom" style="background: #505050; color: white;">
-                                            <?php echo number_format($influencer['max_wins']); ?>
+                                            <?php echo @number_format($influencer['max_wins']); ?>
                                         </span>
                                     <?php else: ?>
                                         <span style="color: var(--dark-text-secondary);">Ilimitado</span>

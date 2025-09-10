@@ -510,7 +510,7 @@ foreach ($saques as $saque) {
                         <i class="bi bi-list-ul"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($stats['total'], 0, ',', '.') ?></h3>
+                <h3 class="stat-value"><?= @number_format($stats['total'], 0, ',', '.') ?></h3>
                 <p class="stat-label">Total de Saques</p>
                 <small>Solicitações registradas no sistema</small>
             </div>
@@ -522,7 +522,7 @@ foreach ($saques as $saque) {
                         <i class="bi bi-clock"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($stats['pendente'], 0, ',', '.') ?></h3>
+                <h3 class="stat-value"><?= @number_format($stats['pendente'], 0, ',', '.') ?></h3>
                 <p class="stat-label">Pendentes</p>
                 <small>Aguardando aprovação</small>
             </div>
@@ -534,7 +534,7 @@ foreach ($saques as $saque) {
                         <i class="bi bi-check-circle"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($stats['concluido'], 0, ',', '.') ?></h3>
+                <h3 class="stat-value"><?= @number_format($stats['concluido'], 0, ',', '.') ?></h3>
                 <p class="stat-label">Concluídos</p>
                 <small>Saques processados com sucesso</small>
             </div>
@@ -546,7 +546,7 @@ foreach ($saques as $saque) {
                         <i class="bi bi-x-circle"></i>
                     </div>
                 </div>
-                <h3 class="stat-value"><?= number_format($stats['cancelado'], 0, ',', '.') ?></h3>
+                <h3 class="stat-value"><?= @number_format($stats['cancelado'], 0, ',', '.') ?></h3>
                 <p class="stat-label">Cancelados</p>
                 <small>Saques cancelados pelo admin</small>
             </div>
@@ -558,7 +558,7 @@ foreach ($saques as $saque) {
                         <i class="bi bi-currency-dollar"></i>
                     </div>
                 </div>
-                <h3 class="stat-value">R$ <?= number_format($stats['valor_total'], 2, ',', '.') ?></h3>
+                <h3 class="stat-value">R$ <?= @number_format($stats['valor_total'], 2, ',', '.') ?></h3>
                 <p class="stat-label">Valor Total</p>
                 <small>Soma dos valores solicitados</small>
             </div>
@@ -593,7 +593,7 @@ foreach ($saques as $saque) {
                                     <strong><?= htmlspecialchars($saque['usuario_nome']) ?></strong><br>
                                     <span class="text-white"><?= htmlspecialchars($saque['usuario_email']) ?></span>
                                 </td>
-                                <td><strong>R$ <?= number_format($saque['valor'], 2, ',', '.') ?></strong></td>
+                                <td><strong>R$ <?= @number_format($saque['valor'], 2, ',', '.') ?></strong></td>
                                 <td>
                                     <strong><?= ucfirst($saque['tipo_chave']) ?></strong><br>
                                     <span class="text-white"><?= htmlspecialchars($saque['chave_pix']) ?></span>

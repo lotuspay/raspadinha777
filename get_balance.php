@@ -10,6 +10,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-echo json_encode(['saldo' => number_format($user['balance'], 2, ',', '.')]);
+echo json_encode(['saldo' => @number_format($user['balance'], 2, ',', '.')]);
 ?>
 

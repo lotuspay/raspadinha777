@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../includes/db.php';
-require_once '../includes/bspay_config.php';
+require_once '../includes/lotuspay_config.php';
 
 // Verificar se o usuário está logado e é admin
 if (!isset($_SESSION['usuario_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
@@ -27,17 +27,17 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
-    if ($action === 'update_bspay') {
+    if ($action === 'update_lotuspay') {
         $client_id = trim($_POST['client_id'] ?? '');
         $client_secret = trim($_POST['client_secret'] ?? '');
         $webhook_url = trim($_POST['webhook_url'] ?? '');
         
         if ($client_id && $client_secret && $webhook_url) {
             try {
-                BSPayConfig::setClientId($client_id);
-                BSPayConfig::setClientSecret($client_secret);
-                BSPayConfig::setWebhookUrl($webhook_url);
-                $success = 'Configurações BSPay atualizadas com sucesso!';
+                LotusPayConfig::setClientId($client_id);
+                LotusPayConfig::setClientSecret($client_secret);
+                LotusPayConfig::setWebhookUrl($webhook_url);
+                $success = 'Configurações LotusPay atualizadas com sucesso!';
             } catch (Exception $e) {
                 $error = 'Erro ao salvar configurações: ' . $e->getMessage();
             }
@@ -80,9 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Busca configurações atuais
-$current_client_id = BSPayConfig::getClientId();
-$current_client_secret = BSPayConfig::getClientSecret();
-$current_webhook_url = BSPayConfig::getWebhookUrl();
+$current_client_id = LotusPayConfig::getClientId();
+$current_client_secret = LotusPayConfig::getClientSecret();
+$current_webhook_url = LotusPayConfig::getWebhookUrl();
 
 // Busca imagens atuais
 function getImagePath($type) {
@@ -104,7 +104,7 @@ function getImagePath($type) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações - Admin BSPay</title>
+    <title>Configurações - Admin LotusPay</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -298,7 +298,7 @@ function getImagePath($type) {
                 <i class="bi bi-gear"></i>
                 Configurações do Sistema
             </h1>
-            <p class="page-subtitle">Gerencie as configurações do BSPay e imagens do sistema</p>
+            <p class="page-subtitle">Gerencie as configurações do LotusPay e imagens do sistema</p>
         </div>
         
         <div class="container-fluid">
@@ -310,14 +310,14 @@ function getImagePath($type) {
             <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
         
-        <!-- Configurações BSPay -->
+        <!-- Configurações LotusPay -->
         <div class="card">
             <div class="card-header">
-                <h2>🔑 Configurações BSPay</h2>
+                <h2>🔑 Configurações LotusPay</h2>
             </div>
             <div class="card-body">
                 <form method="POST">
-                    <input type="hidden" name="action" value="update_bspay">
+                    <input type="hidden" name="action" value="update_lotuspay">
                     
                     <div class="form-group">
                         <label for="client_id">Client ID</label>
@@ -334,7 +334,7 @@ function getImagePath($type) {
                         <input type="url" id="webhook_url" name="webhook_url" value="<?= htmlspecialchars($current_webhook_url) ?>" required>
                     </div>
                     
-                    <button type="submit" class="btn">Salvar Configurações BSPay</button>
+                    <button type="submit" class="btn">Salvar Configurações LotusPay</button>
                 </form>
             </div>
         </div>

@@ -62,9 +62,9 @@ if ($result) {
             echo "<tr>";
             echo "<td>" . htmlspecialchars($row['id']) . "</td>";
             echo "<td>" . htmlspecialchars($row['name']) . "</td>";
-            echo "<td>R$ " . number_format($row['valor_aposta'], 2, ',', '.') . "</td>";
+            echo "<td>R$ " . @number_format($row['valor_aposta'], 2, ',', '.') . "</td>";
             echo "<td>" . htmlspecialchars($row['resultado']) . "</td>";
-            echo "<td>R$ " . number_format($row['premio'], 2, ',', '.') . "</td>";
+            echo "<td>R$ " . @number_format($row['premio'], 2, ',', '.') . "</td>";
             echo "<td>" . date('d/m/Y H:i:s', strtotime($row['data_jogada'])) . "</td>";
             echo "</tr>";
         }
@@ -92,15 +92,15 @@ $stats_result = $conn->query($stats_query);
 if ($stats_result) {
     $stats = $stats_result->fetch_assoc();
     echo "Total de jogadas: " . $stats['total_jogadas'] . "<br>";
-    echo "Total apostado: R$ " . number_format($stats['total_apostado'], 2, ',', '.') . "<br>";
-    echo "Total em prêmios: R$ " . number_format($stats['total_premios'], 2, ',', '.') . "<br>";
+    echo "Total apostado: R$ " . @number_format($stats['total_apostado'], 2, ',', '.') . "<br>";
+    echo "Total em prêmios: R$ " . @number_format($stats['total_premios'], 2, ',', '.') . "<br>";
     echo "Total de vitórias: " . $stats['total_vitorias'] . "<br>";
     
     $lucro_casa = $stats['total_apostado'] - $stats['total_premios'];
     $taxa_vitoria = $stats['total_jogadas'] > 0 ? ($stats['total_vitorias'] / $stats['total_jogadas']) * 100 : 0;
     
-    echo "Lucro da casa: R$ " . number_format($lucro_casa, 2, ',', '.') . "<br>";
-    echo "Taxa de vitória: " . number_format($taxa_vitoria, 1) . "%<br>";
+    echo "Lucro da casa: R$ " . @number_format($lucro_casa, 2, ',', '.') . "<br>";
+    echo "Taxa de vitória: " . @number_format($taxa_vitoria, 1) . "%<br>";
     
     echo "✅ Todas as queries funcionaram corretamente!";
 } else {

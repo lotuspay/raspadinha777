@@ -82,7 +82,7 @@ try {
         "sucesso" => true,
         "ganhou" => $ganhou,
         "premio" => $premio,
-        "saldo" => number_format($user["balance"], 2, ",", "."),
+        "saldo" => @number_format($user["balance"], 2, ",", "."),
         "saldo_numerico" => $user["balance"]
     ]);
     

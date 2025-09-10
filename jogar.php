@@ -152,7 +152,7 @@ $valorGanho = 0;
 if ($premioForcadoAtivo && $premiosPagos < $maxPremios) {
   $ganhou = true;
   $valorGanho = $valorPremio;
-  $mensagem = "🎉 Parabéns! Você ganhou R$ " . number_format($valorPremio, 2, ',', '.');
+  $mensagem = "🎉 Parabéns! Você ganhou R$ " . @number_format($valorPremio, 2, ',', '.');
 
   // Atualiza saldo com prêmio
   $novoSaldo += $valorPremio;
@@ -167,7 +167,7 @@ if ($premioForcadoAtivo && $premiosPagos < $maxPremios) {
   if (mt_rand(0, 99999) / 100000 < $chance) {
     $ganhou = true;
     $valorGanho = $premioMaximo;
-    $mensagem = "🎉 Parabéns! Você ganhou R$ " . number_format($valorGanho, 2, ',', '.');
+    $mensagem = "🎉 Parabéns! Você ganhou R$ " . @number_format($valorGanho, 2, ',', '.');
 
     $novoSaldo += $valorGanho;
     $stmt = $conn->prepare("UPDATE users SET balance = ? WHERE id = ?");
@@ -182,7 +182,7 @@ echo json_encode([
   'ganhou' => $ganhou,
   'premio' => $valorGanho,
   'mensagem' => $mensagem,
-  'saldo' => number_format($novoSaldo, 2, ',', '.')
+  'saldo' => @number_format($novoSaldo, 2, ',', '.')
 ]);
 
 exit;?>

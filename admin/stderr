@@ -1,0 +1,74 @@
+[10-Sep-2025 16:28:58 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'raspadinha.affiliates' doesn't exist in D:\WindSurfProjects\github\raspadinha777\admin\usuarios.php:135
+Stack trace:
+#0 D:\WindSurfProjects\github\raspadinha777\admin\usuarios.php(135): mysqli->query()
+#1 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\usuarios.php on line 135
+[10-Sep-2025 16:37:34 UTC] PHP Deprecated:  @number_format(): Passing null to parameter #1 ($num) of type float is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\payout_management.php on line 704
+[10-Sep-2025 16:37:34 UTC] PHP Deprecated:  @number_format(): Passing null to parameter #1 ($num) of type float is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\payout_management.php on line 715
+[10-Sep-2025 16:37:34 UTC] PHP Deprecated:  @number_format(): Passing null to parameter #1 ($num) of type float is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\payout_management.php on line 726
+[10-Sep-2025 16:39:45 UTC] PHP Warning:  require_once(../includes/lotuspay_config.php): Failed to open stream: No such file or directory in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:39:45 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../includes/lotuspay_config.php' (include_path='.;C:\php\pear') in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:4
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:40:43 UTC] PHP Warning:  require_once(../includes/lotuspay_config.php): Failed to open stream: No such file or directory in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:40:43 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../includes/lotuspay_config.php' (include_path='.;C:\php\pear') in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:4
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:40:47 UTC] PHP Warning:  require_once(../includes/lotuspay_config.php): Failed to open stream: No such file or directory in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:40:47 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../includes/lotuspay_config.php' (include_path='.;C:\php\pear') in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:4
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:40:56 UTC] PHP Warning:  require_once(../includes/lotuspay_config.php): Failed to open stream: No such file or directory in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:40:56 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../includes/lotuspay_config.php' (include_path='.;C:\php\pear') in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:4
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:42:55 UTC] PHP Warning:  require_once(../includes/lotuspay_config.php): Failed to open stream: No such file or directory in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:42:55 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../includes/lotuspay_config.php' (include_path='.;C:\php\pear') in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:4
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:44:20 UTC] PHP Warning:  require_once(../includes/lotuspay_config.php): Failed to open stream: No such file or directory in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:44:20 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../includes/lotuspay_config.php' (include_path='.;C:\php\pear') in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:4
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:47:01 UTC] PHP Warning:  require_once(../includes/lotuspay_config.php): Failed to open stream: No such file or directory in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:47:01 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../includes/lotuspay_config.php' (include_path='.;C:\php\pear') in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:4
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 4
+[10-Sep-2025 16:47:40 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 16:49:24 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 16:50:16 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 16:51:01 UTC] PHP Deprecated:  @number_format(): Passing null to parameter #1 ($num) of type float is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\payout_management.php on line 704
+[10-Sep-2025 16:51:01 UTC] PHP Deprecated:  @number_format(): Passing null to parameter #1 ($num) of type float is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\payout_management.php on line 715
+[10-Sep-2025 16:51:01 UTC] PHP Deprecated:  @number_format(): Passing null to parameter #1 ($num) of type float is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\payout_management.php on line 726
+[10-Sep-2025 16:51:42 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 16:51:56 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 16:53:11 UTC] PHP Warning:  Undefined variable $current_client_id in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 436
+[10-Sep-2025 16:53:11 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 436
+[10-Sep-2025 16:53:11 UTC] PHP Warning:  Undefined variable $current_client_secret in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 448
+[10-Sep-2025 16:53:11 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 448
+[10-Sep-2025 16:53:11 UTC] PHP Warning:  Undefined variable $current_webhook_url in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 460
+[10-Sep-2025 16:53:11 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 460
+[10-Sep-2025 16:53:11 UTC] PHP Warning:  Undefined variable $current_base_url in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 472
+[10-Sep-2025 16:53:11 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 472

@@ -32,7 +32,7 @@ try {
         echo "<td>{$user['id']}</td>";
         echo "<td>{$user['name']}</td>";
         echo "<td>{$user['email']}</td>";
-        echo "<td>R$ " . number_format($user['balance'], 2, ',', '.') . "</td>";
+        echo "<td>R$ " . @number_format($user['balance'], 2, ',', '.') . "</td>";
         echo "<td><strong>$isAdmin</strong></td>";
         echo "<td>" . substr($user['password'], 0, 20) . "...</td>";
         echo "</tr>";

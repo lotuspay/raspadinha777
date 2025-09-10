@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../includes/db.php';
-require_once '../includes/bspay_config.php';
+require_once '../includes/lotuspay_api.php';
 require_once '../includes/security.php';
 
 // Verifica se o usuário está logado
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $action = Security::sanitizeInput($_POST['action'] ?? '');
         
-        if ($action === 'update_bspay') {
+        if ($action === 'update_lotuspay') {
             $client_id = Security::sanitizeInput($_POST['client_id'] ?? '');
             $client_secret = Security::sanitizeInput($_POST['client_secret'] ?? '');
             $webhook_url = Security::sanitizeInput($_POST['webhook_url'] ?? '');
@@ -51,16 +51,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } elseif (!filter_var($base_url, FILTER_VALIDATE_URL)) {
                 $error = 'URL base da API inválida!';
             } elseif (strlen($client_id) < 10 || strlen($client_secret) < 20) {
-                $error = 'Credenciais BSPay parecem inválidas!';
+                $error = 'Credenciais LotusPay parecem inválidas!';
             } else {
                 try {
-                    BSPayConfig::setClientId($client_id);
-                    BSPayConfig::setClientSecret($client_secret);
-                    BSPayConfig::setWebhookUrl($webhook_url);
-                    BSPayConfig::setBaseUrl($base_url);
+                    LotusPayConfig::setClientId($client_id);
+                    LotusPayConfig::setClientSecret($client_secret);
+                    LotusPayConfig::setWebhookUrl($webhook_url);
+                    LotusPayConfig::setBaseUrl($base_url);
                     
-                    $success = 'Configurações BSPay atualizadas com sucesso!';
-                    Security::logSecurityEvent('bspay_config_updated', [
+                    $success = 'Configurações LotusPay atualizadas com sucesso!';
+                    Security::logSecurityEvent('lotuspay_config_updated', [
                         'user_id' => $_SESSION['usuario_id'],
                         'client_id' => substr($client_id, 0, 10) . '...',
                         'webhook_url' => $webhook_url,
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
                 } catch (Exception $e) {
                     $error = 'Erro ao salvar configurações: ' . $e->getMessage();
-                    Security::logSecurityEvent('bspay_config_error', [
+                    Security::logSecurityEvent('lotuspay_config_error', [
                         'user_id' => $_SESSION['usuario_id'],
                         'error' => $e->getMessage()
                     ]);
@@ -81,10 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Busca configurações atuais
-$current_client_id = BSPayConfig::getClientId();
-$current_client_secret = BSPayConfig::getClientSecret();
-$current_webhook_url = BSPayConfig::getWebhookUrl();
-$current_base_url = BSPayConfig::getBaseUrl();
+#$current_client_id = LotusPayConfig::getClientId();
+#$current_client_secret = LotusPayConfig::getClientSecret();
+#$current_webhook_url = LotusPayConfig::getWebhookUrl();
+#$current_base_url = LotusPayConfig::getBaseUrl();
 
 
 
@@ -394,7 +394,7 @@ $csrf_token = Security::generateCSRFToken();
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="dashboard-title">Credenciais do Gateway</h1>
-                    <p class="dashboard-subtitle">Gerencie as configurações do BSPay com segurança</p>
+                    <p class="dashboard-subtitle">Gerencie as configurações do LotusPay com segurança</p>
                 </div>
             </div>
         </div>
@@ -413,19 +413,19 @@ $csrf_token = Security::generateCSRFToken();
             </div>
         <?php endif; ?>
         
-        <!-- BSPay Configuration -->
+        <!-- LotusPay Configuration -->
         <div class="content-section">
             <div class="tab-content-inner">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="section-title mb-0">
                                 <i class="bi bi-key"></i>
-                                Configurações BSPay
+                                Configurações LotusPay
                             </h4>
                         </div>
                         
                         <form method="POST">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-                            <input type="hidden" name="action" value="update_bspay">
+                            <input type="hidden" name="action" value="update_lotuspay">
                             
                             <div class="form-group">
                                 <label for="client_id" class="form-label">
@@ -435,8 +435,8 @@ $csrf_token = Security::generateCSRFToken();
                                 <input type="text" id="client_id" name="client_id" class="form-control"
                                        value="<?= htmlspecialchars($current_client_id) ?>" 
                                        required minlength="10" maxlength="100"
-                                       placeholder="Insira o Client ID do BSPay">
-                                <div class="file-info">Identificador único fornecido pelo BSPay</div>
+                                       placeholder="Insira o Client ID do LotusPay">
+                                <div class="file-info">Identificador único fornecido pelo LotusPay</div>
                             </div>
                             
                             <div class="form-group">
@@ -447,7 +447,7 @@ $csrf_token = Security::generateCSRFToken();
                                 <input type="password" id="client_secret" name="client_secret" class="form-control"
                                        value="<?= htmlspecialchars($current_client_secret) ?>" 
                                        required minlength="20" maxlength="200"
-                                       placeholder="Insira o Client Secret do BSPay">
+                                       placeholder="Insira o Client Secret do LotusPay">
                                 <div class="password-strength">Chave secreta - mantenha em segurança</div>
                             </div>
                             
@@ -471,13 +471,13 @@ $csrf_token = Security::generateCSRFToken();
                                 <input type="url" id="base_url" name="base_url" class="form-control"
                                        value="<?= htmlspecialchars($current_base_url) ?>" 
                                        required pattern="https://.*"
-                                       placeholder="https://api.bspay.co/v2">
-                                <div class="file-info">URL base da API do gateway (BSPay: https://api.bspay.co/v2 | PixUp: https://api.pixup.com.br/v2)</div>
+                                       placeholder="https://api.lotuspay.co/v2">
+                                <div class="file-info">URL base da API do gateway (LotusPay: https://api.lotuspay.co/v2 | PixUp: https://api.pixup.com.br/v2)</div>
                             </div>
                             
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-save"></i>
-                                Salvar Configurações BSPay
+                                Salvar Configurações LotusPay
                             </button>
                         </form>
                     </div>
