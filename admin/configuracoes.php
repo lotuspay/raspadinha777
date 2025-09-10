@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../includes/db.php';
-require_once '../includes/lotuspay_config.php';
+require_once '../includes/lotuspay_api.php';
 
 // Verificar se o usuário está logado e é admin
 if (!isset($_SESSION['usuario_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {

@@ -72,3 +72,51 @@ Stack trace:
 [10-Sep-2025 16:53:11 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 460
 [10-Sep-2025 16:53:11 UTC] PHP Warning:  Undefined variable $current_base_url in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 472
 [10-Sep-2025 16:53:11 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 472
+[10-Sep-2025 16:57:19 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 16:58:52 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 16:59:32 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 17:02:26 UTC] PHP Fatal error:  Uncaught Error: Class "Config" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 17:03:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method LotusPayAPI::getClientId() in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 17:05:18 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 17:05:22 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes.php:83
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes.php on line 83
+[10-Sep-2025 17:05:28 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes.php:83
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes.php on line 83
+[10-Sep-2025 17:05:30 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 17:06:24 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 17:06:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function getClientId() in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84
+[10-Sep-2025 17:09:37 UTC] PHP Fatal error:  Uncaught Error: Class "LotusPayConfig" not found in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php:84
+Stack trace:
+#0 {main}
+  thrown in D:\WindSurfProjects\github\raspadinha777\admin\configuracoes_seguras.php on line 84

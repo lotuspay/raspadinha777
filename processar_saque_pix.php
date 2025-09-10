@@ -67,25 +67,6 @@ try {
         exit;
     }
 
-    // Criar tabela de saques se não existir
-    $createTableQuery = "
-        CREATE TABLE IF NOT EXISTS saques_pix (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
-            valor DECIMAL(10,2) NOT NULL,
-            tipo_chave VARCHAR(20) NOT NULL,
-            chave_pix VARCHAR(255) NOT NULL,
-            nome_completo VARCHAR(255) NOT NULL,
-            cpf VARCHAR(14) NOT NULL,
-            status ENUM('pendente', 'processando', 'concluido', 'cancelado') DEFAULT 'pendente',
-            data_solicitacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            data_processamento TIMESTAMP NULL,
-            observacoes TEXT NULL,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    ";
-    $conn->query($createTableQuery);
-
     // Iniciar transação
     $conn->begin_transaction();
 
@@ -95,7 +76,7 @@ try {
             INSERT INTO saques_pix (user_id, valor, tipo_chave, chave_pix, nome_completo, cpf) 
             VALUES (?, ?, ?, ?, ?, ?)
         ");
-        $stmt->bind_param("idssss", $userId, $valor, $tipoChave, $chavePix, $nomeCompleto, $cpf);
+        $stmt->bind_param("id", $userId, $valor, $tipoChave, $chavePix, $nomeCompleto, $cpf);
         $stmt->execute();
 
         $saqueId = $conn->insert_id;
@@ -147,14 +128,6 @@ try {
             ],
             'amount' => $valor,
             'callbackUrl' => $callbackUrl,
-
-            // Campos adicionais úteis para rastreio/idempotência
-            'external_id' => $externalId,
-            'metadata' => [
-                'user_id' => $userId,
-                'withdraw_id' => $saqueId,
-                'origin' => 'site',
-            ],
         ];
 
         // Loga o payload de cashOut

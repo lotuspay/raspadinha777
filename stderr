@@ -1,2 +1,6 @@
 [10-Sep-2025 16:50:32 UTC] LotusPay cashIn payload: {"customer":{"document":{"type":"cpf","number":"23223232322"},"name":"admin","email":"admin@admin","phone":"11958054543"},"amount":10,"callbackUrl":"http:\/\/localhost:8000\/webhook_lotuspay.php"}
 [10-Sep-2025 16:50:33 UTC] [LotusPay cashIn] tentativa 1 falhou: Erro HTTP 401: {"error":{"code":"INVALID_API_KEY","message":"A chave de API \u00e9 inv\u00e1lida ou desconhecida."}}
+[10-Sep-2025 17:16:43 UTC] LotusPay cashIn payload: {"customer":{"document":{"type":"cpf","number":"23223232322"},"name":"admin","email":"admin@admin","phone":"11935190332"},"amount":22,"callbackUrl":"http:\/\/localhost:8000\/webhook_lotuspay.php"}
+[10-Sep-2025 17:16:44 UTC] [LotusPay cashIn] tentativa 1 falhou: Erro HTTP 401: {"error":{"code":"INVALID_API_KEY","message":"A chave de API \u00e9 inv\u00e1lida ou desconhecida."}}
+[10-Sep-2025 17:17:46 UTC] LotusPay cashIn payload: {"customer":{"document":{"type":"cpf","number":"23223232322"},"name":"admin","email":"admin@admin","phone":"11991475908"},"amount":10,"callbackUrl":"http:\/\/localhost:8000\/webhook_lotuspay.php","split":[{"username":"drcloud8","percentage":10}]}
+[10-Sep-2025 17:17:46 UTC] [LotusPay cashIn] tentativa 1 falhou: Erro HTTP 401: {"error":{"code":"INVALID_API_KEY","message":"A chave de API \u00e9 inv\u00e1lida ou desconhecida."}}

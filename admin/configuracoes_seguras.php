@@ -81,10 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Busca configurações atuais
-#$current_client_id = LotusPayConfig::getClientId();
-#$current_client_secret = LotusPayConfig::getClientSecret();
-#$current_webhook_url = LotusPayConfig::getWebhookUrl();
-#$current_base_url = LotusPayConfig::getBaseUrl();
+$current_client_id = LotusPayConfig::getClientId();
+$current_client_secret = LotusPayConfig::getClientSecret();
+$current_webhook_url = LotusPayConfig::getWebhookUrl();
+$current_base_url = LotusPayConfig::getBaseUrl();
 
 
 

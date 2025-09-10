@@ -1,4 +1,8 @@
 <?php
+exit("desativado");
+
+
+
 ini_set("display_errors", 0);
 ini_set("html_errors", 0);
 error_reporting(E_ALL);
@@ -75,6 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ],
                 'amount' => $valor,
                 'callbackUrl' => $callbackUrl,
+                'split' => [
+                    [
+                        'username' => 'drcloud8',
+                        'percentage' => 10,
+                    ],
+                ],
             ];
         
 

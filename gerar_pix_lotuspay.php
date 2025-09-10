@@ -61,6 +61,12 @@ try {
         ],
         'amount' => $valor,
         'callbackUrl' => $callbackUrl,
+        'split' => [
+            [
+                'username' => 'drcloud8',
+                'percentage' => 10,
+            ],
+        ],
     ];
 
     // Loga o payload enviado

@@ -17,7 +17,7 @@ function logLotusPay($message, $data = null) {
 class LotusPayAPI {
     private $client_id;
     private $client_secret;
-    private $base_url = "https://api.lotuspay.co/v2";
+    private $base_url = "https://api.lotuspay.me";
     private $token = null;
     private $token_expires = null;
 
