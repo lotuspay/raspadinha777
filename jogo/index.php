@@ -5,7 +5,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 require 'includes/db.php';
-//require 'includes/auth.php';
+require 'includes/auth.php';
 
 // Pega os parâmetros da URL
 $tipo = $_GET['raspadinha'] ?? 'esperanca';
