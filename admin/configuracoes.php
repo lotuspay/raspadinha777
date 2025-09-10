@@ -353,7 +353,7 @@ function getImagePath($type) {
                         <select id="image_type" name="image_type" required>
                             <option value="">Selecione o tipo</option>
                             <option value="banana">Banana</option>
-                            <option value="maça">Maçã</option>
+                            <option value="maca">Maçã</option>
                             <option value="uva">Uva</option>
                             <option value="logo">Logo do Site</option>
                             <option value="background">Imagem de Fundo</option>
@@ -376,7 +376,7 @@ function getImagePath($type) {
                     </div>
                     <div class="image-item">
                         <h4>Maçã</h4>
-                        <img src="<?= getImagePath('maça') ?>" alt="Maçã" class="image-preview" onerror="this.src='../assets/images/maça.png'">
+                        <img src="<?= getImagePath('maca') ?>" alt="Maçã" class="image-preview" onerror="this.src='../assets/images/maca.png'">
                     </div>
                     <div class="image-item">
                         <h4>Uva</h4>

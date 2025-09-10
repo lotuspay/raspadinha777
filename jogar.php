@@ -138,7 +138,7 @@ $maxPremios = intval($config['max_premios']);
 $premiosPagos = intval($config['premios_pagos']);
 $valorPremio = floatval($config['valor_premio']);
 
-$allSimbolos = ['maça.png', 'banana.png', 'uva.png', 'laranja.png', 'abacaxi.png', 'morango.png'];
+$allSimbolos = ['maca.png', 'banana.png', 'uva.png', 'laranja.png', 'abacaxi.png', 'morango.png'];
 shuffle($allSimbolos);
 $simbolosSorteados = array_slice($allSimbolos, 0, 6);
 
