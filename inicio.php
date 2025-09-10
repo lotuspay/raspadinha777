@@ -1140,7 +1140,7 @@ try {
                             </svg>
                             <?= htmlspecialchars($nomeUsuario) ?>
                         </button>
-                        <div class="absolute hidden group-hover:block bg-gray-700 mt-1 rounded shadow-md w-40 right-0">
+                        <div class="absolute hidden group-hover:block bg-gray-700 mt-1 rounded shadow-md w-40 right-0 z-10">
                             <a href="perfil.php" class="block px-4 py-2 hover:bg-gray-600 transition-colors">Perfil</a>
                             <a href="perfil.php" class="block px-4 py-2 hover:bg-gray-600 transition-colors">Sacar</a>
                             <a href="logout.php" class="block px-4 py-2 hover:bg-gray-600 transition-colors">Sair</a>
@@ -1583,7 +1583,7 @@ try {
         </button>
 
         <!-- Botão Perfil -->
-        <button onclick="<?= $usuarioLogado ? "window.location.href='perfil'" : "abrirModal('login')" ?>" class="group flex flex-col items-center justify-center gap-1 text-center text-inherit select-none flex-1 transition-transform active:scale-90">
+        <button onclick="<?= $usuarioLogado ? "window.location.href='perfil.php'" : "abrirModal('login')" ?>" class="group flex flex-col items-center justify-center gap-1 text-center text-inherit select-none flex-1 transition-transform active:scale-90">
             <div>
                 <svg viewBox="0 0 448 512" fill="currentColor" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" class="size-5">
                     <path d="M224 256a128 128 0 1 0 0-256 128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3 0 498.7 13.3 512 29.7 512h388.6c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3z"></path>

@@ -385,41 +385,48 @@ $saldo = $usuario['balance'];
         };
 
         const updateBlurBasedOnProgress = (canvas, image, cardIndex) => {
-          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const pixels = imgData.data;
-          const total = pixels.length / 4;
-          let apagados = 0;
+          try {
+            const ctx = canvas.getContext('2d');
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imgData.data;
+            const total = pixels.length / 4;
+            let apagados = 0;
 
-          for (let i = 0; i < pixels.length; i += 4) {
-            if (pixels[i + 3] < 128) apagados++;
-          }
-
-          const percentual = apagados / total;
-          
-          // Calculate blur amount based on percentage (10px to 0px)
-          const maxBlur = 10;
-          const blurAmount = Math.max(0, maxBlur * (1 - percentual));
-          
-          // Apply the calculated blur
-          image.style.filter = `blur(${blurAmount}px)`;
-
-          // Check if card is fully revealed (90% or more scratched)
-          if (percentual >= 0.9 && !raspadoCompleto[cardIndex]) {
-            raspadoCompleto[cardIndex] = true;
-            liberados++;
-            
-            // Ensure image is completely clear
-            image.style.filter = 'blur(0px)';
-            
-            // Visual feedback for the card
-            const cardElement = canvas.closest('.scratch-area');
-            cardElement.style.border = "3px solid #22c55e";
-            cardElement.style.boxShadow = "0 0 20px rgba(34, 197, 94, 0.5)";
-            
-            // Check if all cards are revealed
-            if (liberados === canvases.length) {
-              setTimeout(mostrarMensagemResultado, 500);
+            for (let i = 0; i < pixels.length; i += 4) {
+              if (pixels[i + 3] < 128) apagados++;
             }
+
+            const percentual = apagados / total;
+            
+            // Calculate blur amount based on percentage (10px to 0px)
+            const maxBlur = 10;
+            const blurAmount = Math.max(0, maxBlur * (1 - percentual));
+            
+            // Apply the calculated blur
+            image.style.filter = `blur(${blurAmount}px)`;
+
+            // Check if card is fully revealed (90% or more scratched)
+            if (percentual >= 0.9 && !raspadoCompleto[cardIndex]) {
+              raspadoCompleto[cardIndex] = true;
+              liberados++;
+              
+              // Ensure image is completely clear
+              image.style.filter = 'blur(0px)';
+              
+              // Visual feedback for the card
+              const cardElement = canvas.closest('.scratch-area');
+              if (cardElement) {
+                cardElement.style.border = "3px solid #22c55e";
+                cardElement.style.boxShadow = "0 0 20px rgba(34, 197, 94, 0.5)";
+              }
+              
+              // Check if all cards are revealed
+              if (liberados === canvases.length) {
+                setTimeout(mostrarMensagemResultado, 500);
+              }
+            }
+          } catch (error) {
+            console.error('Error in updateBlurBasedOnProgress:', error);
           }
         };
 
